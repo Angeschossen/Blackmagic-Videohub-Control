@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Videohub {
+  id                 Int                 @id @default(autoincrement())
+  ip                 String              @unique
+  name               String              @unique
+  version            String
+  inputs             Input[]
+  outputs            Output[]
+  pushbuttons        PushButton[]
+  pushbuttonactions  PushButtonAction[]
+  activity           VideohubActivity[]
+  roleoutputs        RoleOutput[]
+  pushbuttontriggers PushButtonTrigger[]
+  latitude           Decimal             @default(29.752825746202255)
+  longitude          Decimal             @default(-95.37672758189905)
+
+  @@map("videohubs")
+}
+
+model Input {
+  id                    Int
+  videohub              Videohub           @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id           Int
+  label                 String
+  outputs               Output[]
+  pushbuttonactions     PushButtonAction[]
+  outputs_default_input Output[]           @relation("defaultInput")
+
+  @@id([videohub_id, id], name: "videohub_input")
+  @@map("inputs")
+}
+
+model Output {
+  id                Int
+  videohub          Videohub            @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id       Int
+  input             Input?              @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
+  input_id          Int?
+  input_default     Input?              @relation("defaultInput", fields: [videohub_id, input_default_id], references: [videohub_id, id], onDelete: Cascade)
+  input_default_id  Int?
+  label             String
+  pushbuttonactions PushButtonAction[]
+  roleoutputs       RoleOutput[]
+  PushButtonTrigger PushButtonTrigger[]
+
+  @@id([videohub_id, id], name: "videohub_output")
+  @@map("outputs")
+}
+
+model PushButtonAction {
+  id                Int                 @id @default(autoincrement())
+  videohub          Videohub            @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id       Int
+  output            Output              @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id         Int
+  input             Input               @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
+  input_id          Int
+  pushbutton        PushButton          @relation(fields: [pushbutton_id], references: [id], onDelete: Cascade)
+  pushbutton_id     Int
+  PushButtonTrigger PushButtonTrigger[]
+
+  @@map("pushbuttons_actions")
+}
+
+enum TriggerType {
+  TIME
+  SUNRISE
+  SUNSET
+}
+
+model PushButtonTrigger {
+  videohub      Videohub         @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  id            String           @default(cuid())
+  type          TriggerType      @default(TIME)
+  pushbutton_id Int
+  pushbutton    PushButton       @relation(fields: [pushbutton_id], references: [id], onDelete: Cascade)
+  time          DateTime         @db.Time()
+  day           Int
+  videohub_id   Int
+  output        Output           @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id     Int
+  action        PushButtonAction @relation(fields: [action_id], references: [id], onDelete: Cascade)
+  action_id     Int
+
+  @@id([action_id, id, day], name: "action_trigger_day")
+  @@map("pushbuttons_triggers")
+}
+
+model PushButton {
+  id          Int                 @id @default(autoincrement())
+  videohub    Videohub            @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  label       String              
+  description String
+  display     Boolean             @default(true)
+  sorting     Int                 @default(0)
+  actions     PushButtonAction[]
+  color       String?
+  user        User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     String
+  triggers    PushButtonTrigger[]
+
+  @@map("pushbuttons")
+}
+
+model VideohubActivity {
+  id          Int      @id @default(autoincrement())
+  videohub    Videohub @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  title       String
+  description String?  @db.MediumText
+  icon        String
+  time        DateTime
+
+  @@map("videohub_activities")
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  editable    Boolean
+  users       User[]
+  permissions RolePermission[]
+  outputs     RoleOutput[]
+
+  @@map("roles")
+}
+
+model RolePermission {
+  permission String
+  role       Role   @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id    Int
+
+  @@id([role_id, permission], name: "role_permissions")
+  @@map("roles_permissions")
+}
+
+model User {
+  id           String       @id @default(cuid())
+  username     String       @unique /// @encrypted
+  usernameHash String?      @unique @map("username_hash") /// @encryption:hash(username)
+  password     String /// @encrypted
+  role         Role?        @relation(fields: [role_id], references: [id], onDelete: SetNull)
+  role_id      Int?
+  PushButton   PushButton[]
+
+  @@map("users")
+}
+
+model RoleOutput {
+  role        Role     @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id     Int
+  videohub    Videohub @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  output      Output   @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id   Int
+
+  @@unique([role_id, videohub_id, output_id])
+  @@map("roles_outputs")
+}
