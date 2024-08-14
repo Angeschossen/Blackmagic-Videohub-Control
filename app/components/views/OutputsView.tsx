@@ -1,8 +1,8 @@
 import { Dropdown, Option } from "@fluentui/react-components";
 import { TableCellLayout } from "@fluentui/react-components";
 import DataTable, { DataTableColumn, DataTableItem } from "../DataTableNew";
-import { getPostHeader } from "@/app/util/fetchutils";
-import { IInput, IOutput, IRoutingUpdateCollection, IVideohub } from "@/app/interfaces/videohub";
+import { getRequestHeader } from "@/app/util/fetchutils";
+import { IInput, IOutput, IRoutingUpdateCollection, IVideohub, RoutingUpdateResult } from "@/app/interfaces/videohub";
 import { hasRoleOutput, IUser } from "@/app/authentification/interfaces";
 
 
@@ -65,11 +65,11 @@ export const OutputsView = (props: { videohub: IVideohub, outputs: IOutput[], us
                                     const found: IInput = getInputByLabel(videohub, data.optionValue);
                                     const routingUpdate: IRoutingUpdateCollection = { videohubId: videohub.id, outputs: [output.id], inputs: [found.id] };
 
-                                    await fetch('/api/videohubs/updateRouting', getPostHeader(routingUpdate)).then(async res => {
+                                    await fetch(`/api/videohubs/${videohub.id}/routing`, getRequestHeader("POST", routingUpdate)).then(async res => {
                                         if (props.onRoutingUpdate != undefined) {
-                                            const json = await res.json()
-                                            routingUpdate.error = json.error == undefined ? undefined : `Routing update failed: ${json.error}`
-                                            props.onRoutingUpdate(routingUpdate)
+                                            const json = await res.json() as RoutingUpdateResult;
+                                            routingUpdate.error = json.result ? undefined : `Routing update failed: ${json.message}`
+                                            props.onRoutingUpdate(routingUpdate);
                                         }
                                     })
                                 }}>
@@ -89,14 +89,19 @@ export const OutputsView = (props: { videohub: IVideohub, outputs: IOutput[], us
                                     defaultSelectedOptions={[selected]}
                                     placeholder={selected}
                                     onOptionSelect={async (_event: any, data: any) => {
-                                        const found: IInput | undefined = getInputByLabel(videohub, data.optionValue);
-                                        const routingUpdate: IRoutingUpdateCollection = { videohubId: videohub.id, outputs: [output.id], inputs: [found.id] }
+                                        const found: IInput | undefined = data.optionValue === "None" ? undefined : getInputByLabel(videohub, data.optionValue);
+                                        const routingUpdate: IRoutingUpdateCollection = { videohubId: videohub.id, outputs: [output.id], inputs: [found == undefined ? -1 : found.id] }
 
-                                        await fetch('/api/videohubs/setDefaultInput', getPostHeader(routingUpdate)).then(async res => {
+                                        await fetch(`/api/videohubs/${videohub.id}/default-input`, getRequestHeader("PUT", routingUpdate)).then(async res => {
                                             if (props.onRoutingUpdate != undefined) {
-                                                const json = await res.json()
-                                                routingUpdate.error = json.error == undefined ? undefined : `Default input update failed: ${json.error}`
-                                                props.onRoutingUpdate(routingUpdate)
+                                                if (res.status == 200) {
+                                                    const json = await res.json()
+                                                    routingUpdate.error = json.error == undefined ? undefined : `Default input update failed: ${json.error}`
+                                                } else {
+                                                    routingUpdate.error = "Request failed.";
+                                                }
+
+                                                props.onRoutingUpdate(routingUpdate);
                                             }
                                         })
                                     }}>

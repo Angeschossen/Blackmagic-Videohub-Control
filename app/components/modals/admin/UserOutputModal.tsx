@@ -1,6 +1,6 @@
 import { Button } from "@fluentui/react-components";
 import { CheckBoxModal } from "./CheckBoxModal";
-import { getPostHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { IVideohub } from "@/app/interfaces/videohub";
 import { IRole } from "@/app/authentification/interfaces";
 
@@ -19,7 +19,7 @@ export const UserOutput = (props: Props) => {
                 Outputs
             </Button>}
             handleSubmit={async function (checked: string[]): Promise<string | undefined> {
-                return fetch('/api/roles/setoutputs', getPostHeader({ videohub_id: props.videohub.id, role_id: props.role.id, outputs: checked })).then(res => {
+                return fetch(`/api/roles/${props.role.id}/outputs`, getRequestHeader("PUT",{ videohub_id: props.videohub.id, outputs: checked })).then(res => {
                     return undefined;
                 });
             }}

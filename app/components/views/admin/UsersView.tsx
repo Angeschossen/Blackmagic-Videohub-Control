@@ -3,7 +3,7 @@ import { TableCellLayout } from "@fluentui/react-components";
 import { Delete16Regular } from "@fluentui/react-icons";
 import { DataTable, DataTableColumn, DataTableItem } from "../../DataTableNew";
 import { getRoleById, getRoleByName } from "./RolesView";
-import { getPostHeader } from "@/app/util/fetchutils";
+import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IRole, IUser } from "@/app/authentification/interfaces";
 
 interface Props {
@@ -41,7 +41,7 @@ export const UsersView = (props: Props) => {
                             const name: string = data.optionValue;
                             const found: IRole | undefined = getRoleByName(props.roles, name)
                             if (found != undefined) {
-                                await fetch('/api/users/setrole', getPostHeader({ user_id: user.id, role_id: found.id }));
+                                await fetch(`/api/users/${user.id}`, getRequestHeader("PATCH", { id: user.id, role_id: found.id } as IUser));
                             }
                         }}>
                         {props.roles.filter(role => role.editable).map(role =>
@@ -56,7 +56,7 @@ export const UsersView = (props: Props) => {
                         icon={<Delete16Regular />}
                         disabled={role != undefined && !role.editable}
                         onClick={async () => {
-                            await fetch('/api/users/delete', getPostHeader({ id: user.id })).then(res => {
+                            await fetch(`/api/users/${user.id}`, getRequestHeader("DELETE")).then(res => {
                                 if (res.status === 200) {
                                     props.onUserDeleted(user)
                                 }

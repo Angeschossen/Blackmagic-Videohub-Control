@@ -10,7 +10,7 @@ import { InputModal } from "../InputModalNew";
 import { stackTokens, useInputStyles } from "@/app/util/styles";
 import { getRandomKey } from "@/app/util/commonutils";
 import { useGetClientId } from "@/app/authentification/client-auth";
-import { getPostHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { IRoutingUpdate, IScene } from "@/app/interfaces/scenes";
 import { IVideohub } from "@/app/interfaces/videohub";
 import { hasRoleOutput, IUser } from "@/app/authentification/interfaces";
@@ -56,6 +56,7 @@ const RoutingComponent = (props: {
 
     const out = props.routing.output == undefined ? undefined : props.videohub.outputs[props.routing.output].label;
     const inp = props.routing.input == undefined ? undefined : props.videohub.inputs[props.routing.input].label;
+
     return (
         <div className={styles.root}>
             <h3>#{props.num}</h3>
@@ -201,7 +202,7 @@ export const EditPushButtonModal = (props: Props) => {
                 <Button icon={<DeleteRegular />} style={{ backgroundColor: '#ed2b2b' }} onClick={async () => {
                     const button = props.button
                     if (button != undefined) {
-                        await fetch('/api/scenes/delete', getPostHeader(button)).then(async (res) => {
+                        await fetch(`/api/videohubs/${button.videohub_id}/scenes/${button.id}`, getRequestHeader("DELETE")).then(async (res) => {
                             if (res.status === 200) {
                                 props.onButtonUpdate(button, "delete")
                             }
@@ -240,7 +241,7 @@ export const EditPushButtonModal = (props: Props) => {
                         triggers: props.button?.triggers || [],
                     }
 
-                    const result = await fetch('/api/scenes/update', getPostHeader(button))
+                    const result = await fetch(`/api/videohubs/${button.videohub_id}/scenes${button.id == -1 ? '' : `/${button.id}`}`, getRequestHeader("PUT", button))
                     if (result.status === 200) {
                         const r: PushButton = await result.json()
                         const buttonNew = {

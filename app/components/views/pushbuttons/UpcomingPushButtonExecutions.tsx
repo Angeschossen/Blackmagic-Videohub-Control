@@ -3,9 +3,9 @@ import React from "react";
 import { AlertMessage } from "../../common/AlertMessage";
 import { Tooltip } from "@fluentui/react-components";
 import { getTriggerExportTimeWithoutDay } from "@/app/util/dateutil";
-import { getPostHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { IVideohub } from "@/app/interfaces/videohub";
-import { IUpcomingScene } from "@/app/interfaces/scenes";
+import { ICancelScheduledSceneRequest, IUpcomingScene } from "@/app/interfaces/scenes";
 
 
 export const ScheduledButtons = (props: { videohub: IVideohub, scheduledButtons: IUpcomingScene[] }) => {
@@ -23,7 +23,7 @@ export const ScheduledButtons = (props: { videohub: IVideohub, scheduledButtons:
                     {
                         icon: button.cancelled ? <Tooltip content="Activate this routing update." relationship="description"><CheckmarkRegular /></Tooltip> : <Tooltip content={"Cancel this routing update."} relationship="description"><DeleteRegular /></Tooltip>,
                         onClick: async () => {
-                            await fetch('/api/scenes/cancel', getPostHeader({ videohub_id: props.videohub.id, buttonId: button.id, cancel: !button.cancelled }))
+                            await fetch(`/api/videohubs/${props.videohub.id}/scenes/${button.id}/cancel`, getRequestHeader("PATCH", { cancel: !button.cancelled } as ICancelScheduledSceneRequest));
                         }
                     }
                 } />

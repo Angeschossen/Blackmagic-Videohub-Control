@@ -2,7 +2,7 @@ import { Input, InputProps, Label, useId } from "@fluentui/react-components";
 import React from "react";
 import { InputModal } from "./InputModalNew";
 import { useInputStyles } from "@/app/util/styles";
-import { getPostHeader } from "@/app/util/fetchutils";
+import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IVideohub } from "@/app/interfaces/videohub";
 
 interface Props {
@@ -88,7 +88,7 @@ export const EditVideohubModal = (props: Props) => {
                     videohub.latitude = latitude
                 }
 
-                await fetch('/api/videohubs/update', getPostHeader(videohub)).then(async res => {
+                await fetch('/api/videohubs', getRequestHeader("PUT", videohub)).then(async res => {
                     if (res.status === 200) {
                         props.onVideohubUpdate(await res.json())
                     }

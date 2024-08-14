@@ -224,6 +224,4 @@ export async function setup() {
             }
         }), true)
     })
-
-    console.log("Setup completed.")
 }

@@ -1057,16 +1057,6 @@ export async function setupVideohubs() {
     scheduleButtonsAtMidnight()
 }
 
-export async function retrieveUpcomingTriggers(date: Date, videohub: Videohub) {
-    for (const client of getClients()) {
-        if (client.data.id === videohub.data.id) {
-            return client.getScheduledButtons()
-        }
-    }
-
-    return []
-}
-
 export function getVideohubs() {
     return getClients().map(client => client.data);
 }
@@ -1099,14 +1089,15 @@ export function executeButton(videohub_id: number, button_id: number) {
     return videohubClient.executeButton(button_id)
 }
 
-export function cancelScheduledButton(videohubId: number, buttonId: number, cancel: boolean) {
+export function getScheduledButton(videohubId: number, buttonId: number) {
     const videohubClient = getClient(videohubId);
     if (videohubClient == undefined) {
         throw Error("Client not found: " + videohubId);
     }
 
-    return videohubClient.cancelScheduledButton(buttonId, cancel)
+    return videohubClient.getScheduledButton(buttonId)
 }
+
 export async function handleButtonReSchedule(videohubId: number, buttonId: number) {
     const videohubClient = getClient(videohubId);
     if (videohubClient == undefined) {

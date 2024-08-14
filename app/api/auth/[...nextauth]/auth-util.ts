@@ -3,7 +3,7 @@ import { getPrisma } from "@/app/backend/prismadb";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
-import { retrieveUserServerSide, sanitizeUser } from "../../users/[slug]/server-users";
+import { retrieveUserServerSide, sanitizeUser } from "../../users/[[...slug]]/server-users";
 
 const VERSION = "0.1.0"
 

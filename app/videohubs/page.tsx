@@ -2,35 +2,30 @@
 
 import { Button, Switch, SwitchOnChangeData, Toaster, Tooltip, useId, useToastController } from '@fluentui/react-components';
 import { EditRegular } from '@fluentui/react-icons';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useRef } from 'react';
-import { getPostHeader } from '../util/fetchutils';
 import { IScene, IUpcomingScene } from '../interfaces/scenes';
 import { IOutput, IRoutingUpdateCollection, IVideohub, ViewData } from '../interfaces/videohub';
 import { IUser } from '../authentification/interfaces';
 import { useViewType } from '../components/views/DesktopView';
 import { useClientSession, useGetClientId } from '../authentification/client-auth';
 import { sendToast } from '../components/common/AlertMessage';
-import { Socket } from 'socket.io';
 import { PERMISSION_VIDEOHUB_SCENES_EDIT } from '../authentification/permissions';
 import { VideohubPage } from '../components/videohub/VideohubPage';
 import SelectVideohub from '../components/buttons/SelectVideohubNew';
 import { OutputsView } from '../components/views/OutputsView';
 import { ScheduledButtons } from '../components/views/pushbuttons/UpcomingPushButtonExecutions';
 import { PushButtonsList } from '../components/views/pushbuttons/PushButtonsView';
-import { useSession } from 'next-auth/react';
-import { useSearchParams } from 'next/navigation';
 import { useSocket } from '../providers/socket-provider';
 import { Loading } from '../components/common/LoadingScreen';
-import { io } from 'socket.io-client';
 import { getVideohub } from './videohubutil';
 
 async function retrievePushButtonsClientSide(videohub: number): Promise<IScene[]> {
-    return (await fetch('/api/scenes/get', getPostHeader({ videohub_id: videohub })).then()).json();
+    return (await fetch(`/api/videohubs/${videohub}/scenes`).then()).json();
 }
 
 async function retrieveScheduledButtonsClientSide(videohub: number): Promise<IUpcomingScene[]> {
-    return (await fetch('/api/scenes/getScheduled', getPostHeader({ videohub_id: videohub })).then()).json()
+    return (await fetch(`/api/videohubs/${videohub}/scenes/scheduled`).then()).json()
 }
 
 function canEditPushButtons(canEditPushButtons: boolean, videohub?: IVideohub) {
@@ -55,6 +50,8 @@ interface VideohubViewProps {
 const VideohubView = () => {
     const userId: string = useGetClientId();
     const isDekstop = useViewType();
+    const params = useParams<{ videohub?: string }>()
+
     const [selectInput, setSelectInput] = React.useState(false)
     const [routingUpdate, setRoutingUpdate] = React.useState<IRoutingUpdateCollection>()
 
@@ -150,7 +147,7 @@ const VideohubView = () => {
     }, [videohubs]);
 
     useEffect(() => {
-        fetch(`/api/videohubs/getViewData?videohub=${0}`).then(res => {
+        fetch(`/api/videohubs/view-data${params?.videohub == undefined ? '' : `?videohub=${params.videohub}`}`).then(res => {
             if (res.status === 200) {
                 res.json().then((json: ViewData) => {
                     const selectedVideohub: IVideohub | undefined = getVideohub(json.videohubs, Number(json.videohub));
@@ -163,7 +160,7 @@ const VideohubView = () => {
                 });
             }
         })
-    }, []);
+    }, [params?.videohub]);
 
     useEffect(() => {
         if (socket == null) {
@@ -248,7 +245,7 @@ const VideohubView = () => {
                                             return
                                         }
 
-                                        router.push(`../scenes?videohub=${videohub.id}`);
+                                        router.push(`../videohubs/scenes?videohub=${videohub.id}`);
                                     }}>
                                     Edit
                                 </Button>

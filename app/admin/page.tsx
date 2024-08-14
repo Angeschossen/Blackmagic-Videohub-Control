@@ -22,7 +22,7 @@ const Page = () => {
     const [permissions, setPermissions] = React.useState<string[]>([]);
 
     useEffect(() => {
-        fetch('/api/roles/getAdminViewData').then(res => res.json().then(json => {
+        fetch('/api/roles/admin-view').then(res => res.json().then(json => {
             const r: AdminViewData = json;
             setVideohubs(r.videohubs);
 

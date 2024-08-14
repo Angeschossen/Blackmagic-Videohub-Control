@@ -5,9 +5,13 @@ export type ResponseData = {
     message: string
 }
 
-export function createResponseInvalid(req: NextRequest, msg: string): NextResponse<ResponseData> {
+export type ResponseDataParam = ResponseData & {
+    status: number,
+}
+
+export function createResponseInvalid(req: NextRequest, msg?: string): NextResponse<ResponseData> {
     console.log("Invalid request: " + msg + " Request: " + req)
-    return new NextResponse(JSON.stringify({ message: "Invalid request", error: "Invalid request" }), { status: 405 })
+    return new NextResponse(JSON.stringify({ message: "Invalid request", error: "Invalid request" }), { status: 400 })
 }
 
 export function createResponseUnauthorized(req: NextRequest): NextResponse<ResponseData> {
@@ -16,8 +20,12 @@ export function createResponseUnauthorized(req: NextRequest): NextResponse<Respo
 }
 
 export function createResponseInvalidTransparent(req: NextRequest, msg: string): NextResponse<ResponseData> {
-    console.log("Invalid request: " + msg + " Request: " + req)
-    return new NextResponse(JSON.stringify({ message: `Invalid Request: ${msg}` }))
+    return createResponseInvalidTransparentWithStatus(req, { message: msg, status: 400 });
+}
+
+export function createResponseInvalidTransparentWithStatus(req: NextRequest, resp: ResponseDataParam): NextResponse<ResponseData> {
+    console.log("Invalid request: " + resp.message + " Request: " + req)
+    return new NextResponse(JSON.stringify({ message: resp.message }), { status: resp.status });
 }
 
 export function checkIsPost(req: NextRequest): NextResponse<ResponseData> | null {
@@ -28,14 +36,23 @@ export function checkIsPost(req: NextRequest): NextResponse<ResponseData> | null
     return null
 }
 
+export function checkSlugLength(req: NextRequest, expected: number, slug?: string[]): NextResponse<ResponseData> | null {
+    if (slug == undefined || slug.length < expected) {
+        return createResponseInvalid(req, "Request is invalid.");
+    }
+
+    return null;
+}
+
+
 export function checkHasParams(req: NextRequest, ...value: any): NextResponse<ResponseData> | null {
     for (const val of value) {
-        if (val == undefined) {
+        if (val == undefined || val == null) {
             return createResponseInvalid(req, "Parameters missing.")
         }
     }
 
-    return null
+    return null;
 }
 
 export function createResponseValid(req: NextRequest, send?: any): NextResponse<ResponseData> {

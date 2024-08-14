@@ -6,7 +6,7 @@ import { DataTable, DataTableColumn, DataTableItem } from "../../DataTableNew";
 import { CheckboxChoice, CheckBoxModal } from "../../modals/admin/CheckBoxModal";
 import { TOGGLEABLE_PERMISSIONS } from "@/app/authentification/permissions";
 import { stackTokens } from "@/app/util/styles";
-import { getPostHeader } from "@/app/util/fetchutils";
+import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IRole } from "@/app/authentification/interfaces";
 import { IVideohub } from "@/app/interfaces/videohub";
 
@@ -68,7 +68,7 @@ export const RolesView = (props: Props) => {
                                     </Button>
                                 }
                                 handleSubmit={async function (checked: string[]): Promise<string | undefined> {
-                                    return fetch('/api/roles/setpermissions', getPostHeader({ role_id: role.id, permissions: checked })).then(res => {
+                                    return fetch(`/api/roles/${role.id}/permissions`, getRequestHeader("PUT", { permissions: checked })).then(res => {
                                         return undefined;
                                     });
                                 }}
@@ -93,7 +93,7 @@ export const RolesView = (props: Props) => {
                                     }
 
                                     const arr: number[] = checked.map(value => Number(value))
-                                    return fetch('/api/roles/setoutputs', getPostHeader({ videohub_id: videohub.id, role_id: role.id, outputs: arr })).then(res => {
+                                    return fetch(`/api/roles/${role.id}/outputs`, getRequestHeader("PUT", { videohub_id: videohub.id, outputs: arr })).then(res => {
                                         return undefined;
                                     })
                                 }}
@@ -108,7 +108,7 @@ export const RolesView = (props: Props) => {
                                 icon={<Delete16Regular />}
                                 disabled={!role.editable}
                                 onClick={async () => {
-                                    await fetch('/api/roles/delete', getPostHeader({ role_id: role.id })).then(res => {
+                                    await fetch(`/api/roles/${role.id}`, getRequestHeader("DELETE")).then(res => {
                                         if (res.status === 200) {
                                             props.onRoleDeleted(role)
                                         }

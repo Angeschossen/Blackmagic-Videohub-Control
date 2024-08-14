@@ -3,7 +3,7 @@ import { CompoundButton, makeStyles, ProgressBar } from "@fluentui/react-compone
 import { Field } from "@fluentui/react-components";
 import { useState } from "react";
 import { getRandomKey } from "@/app/util/commonutils";
-import { getPostHeader } from "@/app/util/fetchutils";
+import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IScene } from "@/app/interfaces/scenes";
 import { IRoutingRequest, IVideohub, RoutingUpdateResult } from "@/app/interfaces/videohub";
 
@@ -122,7 +122,7 @@ export const PushButtonsList = (props: InputProps) => {
 
                     setRequest(req)
 
-                    const json: RoutingUpdateResult = await (await fetch('/api/videohubs/updateRouting', getPostHeader(req))).json();
+                    const json: RoutingUpdateResult = await (await fetch(`/api/videohubs/${req.videohubId}/routing`, getRequestHeader("POST", req))).json();
                     req.result = json;
                     if (!json.result) {
                       req.result.message = `Failed: ${json.message || "Unknown"}`

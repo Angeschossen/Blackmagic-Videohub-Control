@@ -28,28 +28,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMediaQuery } from "react-responsive";
 import { useClientSession } from "@/app/authentification/client-auth";
 import { PERMISSION_ROLE_EDIT, PERMISSION_USER_EDIT } from "@/app/authentification/permissions";
-import { useEffect, useState } from "react";
 
-const useStyles = makeStyles({
-    root: {
-        overflow: "hidden",
-        display: "flex",
-        height: "100vh"
-    },
-    content: {
-        flex: "1",
-        padding: "16px",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-    },
-    field: {
-        display: "flex",
-        marginTop: "4px",
-        marginLeft: "8px",
-        flexDirection: "column",
-        gridRowGap: tokens.spacingVerticalS,
-    },
-});
 
 const Videohubs = bundleIcon(VideoSwitch20Filled, VideoSwitch20Regular);
 const Home = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);

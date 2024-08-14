@@ -8,7 +8,7 @@ import { InputModal } from "../InputModalNew";
 import { TriggerType } from "@prisma/client";
 import { stackTokens, useInputStyles } from "@/app/util/styles";
 import { convertDateToLocal } from "@/app/util/dateutil";
-import { getPostHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { IScene, ISceneTrigger } from "@/app/interfaces/scenes";
 
 interface Day {
@@ -242,7 +242,7 @@ export const PushButtonScheduleModal = (props: { button: IScene, trigger: JSX.El
             trigger={props.trigger}
             description="You can add multiple triggers for each scene. However, they can only be applied when the videohub is reachable."
             handleSubmit={async function (): Promise<string | undefined> {
-                const res = await fetch('/api/scenes/setTriggers', getPostHeader({ pushbutton_id: props.button.id, videohub_id: props.button.videohub_id, actions: props.button.actions, triggers: triggers }))
+                const res = await fetch(`/api/videohubs/${props.button.videohub_id}/scenes/${props.button.id}/triggers`, getRequestHeader("PUT", { actions: props.button.actions, triggers: triggers }))
                 if (res.status != 200) {
                     return Promise.resolve("Failed")
                 }

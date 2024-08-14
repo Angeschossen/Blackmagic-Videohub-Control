@@ -1,7 +1,7 @@
 import { Input, InputProps, Label, useId } from "@fluentui/react-components";
 import React from "react";
 import { InputModal } from "../InputModalNew";
-import { getPostHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { useInputStyles } from "@/app/util/styles";
 import { IRole } from "@/app/authentification/interfaces";
 
@@ -55,7 +55,7 @@ export const RoleModal = (props: Props) => {
                     create = false
                 }
 
-                return fetch('/api/roles/upsert', getPostHeader({ role: role })).then(async res => {
+                return fetch('/api/roles', getRequestHeader("PUT", role)).then(async res => {
                     const json = await res.json();
 
                     const resRole: IRole = { id: json.id, name: json.name, outputs: role.outputs, permissions: role.permissions, editable: json.editable }

@@ -13,6 +13,14 @@ export interface IScene {
     triggers: PushButtonTrigger[],
 }
 
+export interface IPatchTriggersSceneRequest {
+    triggers: ISceneTrigger[],
+    actions: IRoutingUpdate[]
+}
+export interface ICancelScheduledSceneRequest {
+    cancel: boolean
+}
+
 export interface IUpcomingScene {
     id: number,
     cancelled: boolean,

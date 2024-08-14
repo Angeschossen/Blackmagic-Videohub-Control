@@ -1,4 +1,4 @@
-import { sanitizeRole } from "../../roles/[slug]/server-roles";
+import { sanitizeRole } from "../../roles/[[...slug]]/server-roles";
 import { IUser } from "@/app/authentification/interfaces";
 import { TTLCacheService } from "@/app/util/TTLCache";
 import { getPrisma } from "@/app/backend/prismadb";

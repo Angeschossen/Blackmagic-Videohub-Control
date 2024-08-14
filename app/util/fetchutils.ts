@@ -1,10 +1,9 @@
-export function getPostHeader(e: any): RequestInit {
-    return {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-  
-      body: JSON.stringify(e),
-    };
-  }
+export function getRequestHeader(method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH", e?: any): RequestInit {
+  return {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: e == undefined ? undefined : JSON.stringify(e),
+  };
+}

@@ -17,10 +17,6 @@ export function sanitizeRole(role: { id: number, editable: boolean, name: string
     }
 }
 
-export function getRoleByIdBackendUsage(id: number): IRole | undefined {
-    return getRoleById(id)
-}
-
 export function retrievePermissionsServerSide(): string[] {
     return TOGGLEABLE_PERMISSIONS;
 }

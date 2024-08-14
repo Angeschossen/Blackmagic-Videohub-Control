@@ -8,7 +8,6 @@ import { IUser } from "../../authentification/interfaces";
 import { VideohubPage } from "../../components/videohub/VideohubPage";
 import { EditPushButtonModal } from "../../components/modals/pushbuttons/EditPushButtonModalNew";
 import { PushButtonsTableView } from "../../components/views/pushbuttons/PushButtonsTableView";
-import { getPostHeader } from "../../util/fetchutils";
 import { Loading } from "../../components/common/LoadingScreen";
 import { useGetClientId } from "../../authentification/client-auth";
 import { useSearchParams } from "next/navigation";
@@ -23,18 +22,18 @@ const PushButtonListNew = () => {
     const videohubId = searchParams?.get("videohub")
 
     useEffect(() => {
-        fetch(`/api/videohubs/getVideohub?videohub=${videohubId}`)
+        fetch(`/api/videohubs/${videohubId}`)
             .then(res => res.json().then(json => {
                 setVideohub(json);
             }));
 
-        if (videohubId) {
-            fetch('/api/scenes/get', getPostHeader({ videohub_id: Number(videohubId) })).then(res => res.json()).then(json => {
+        if (videohubId != undefined && videohubId != null) {
+            fetch(`/api/videohubs/${videohubId}/scenes`).then(res => res.json()).then(json => {
                 setScenes(json)
             })
         }
 
-        fetch('/api/users/get', getPostHeader({ id: userId })).then(res => res.json()).then(json => {
+        fetch(`/api/users/${userId}`).then(res => res.json()).then(json => {
             setUser(json)
         })
     }, [userId, videohubId]);
