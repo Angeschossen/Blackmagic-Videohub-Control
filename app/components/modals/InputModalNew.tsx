@@ -1,8 +1,6 @@
-import { Stack } from "@fluentui/react";
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogOpenChangeData, DialogOpenChangeEvent, DialogSurface, DialogTitle, DialogTrigger, makeStyles } from "@fluentui/react-components";
 import React from "react";
 import { AlertMessage } from "../common/AlertMessage";
-import { stackTokens } from "@/app/util/styles";
 
 
 interface InputProps extends InputModalProps {
@@ -66,19 +64,18 @@ export const InputModal = (props: InputProps) => {
                     <DialogBody>
                         <DialogTitle>{props.title}</DialogTitle>
                         <DialogContent className={styles.content}>
-                            <Stack horizontalAlign="center" style={{ marginBottom: 8 }}>
+                            <div className="flex flex-col items-center">
                                 {props.description}
-                                <Stack tokens={stackTokens}>
+                                <div>
                                     {props.children}
                                     {error != undefined &&
-                                        <Stack.Item>
-                                            <AlertMessage
-                                                style={{ margin: 5 }}
-                                                intent="error"
-                                                message={error} />
-                                        </Stack.Item>}
-                                </Stack>
-                            </Stack>
+                                        <AlertMessage
+                                            style={{ margin: 5 }}
+                                            intent="error"
+                                            message={error} />
+                                    }
+                                </div>
+                            </div>
                         </DialogContent>
                         <DialogActions>
                             <DialogTrigger>
@@ -94,31 +91,4 @@ export const InputModal = (props: InputProps) => {
             </DialogSurface>
         </Dialog>
     );
-
-    /*
-    return (
-        <Modal
-            isOpen={props.isOpen}
-            key={props.modalKey}>
-            <Stack tokens={stackTokens} styles={{ root: { padding: '2vh' } }}>
-                {props.children}
-                {data.error != undefined &&
-                    <BarMessage text={data.error} type={MessageBarType.error}></BarMessage>
-                }
-                <Confirmation
-                    onCancel={() => {
-                        close();
-                        props.onCancel();
-                    }}
-                    onConfirm={() => {
-                        const err: string | undefined = props.onConfirm();
-                        if (err == undefined) {
-                            close();
-                        } else {
-                            setData({ error: err });
-                        }
-                    }} />
-            </Stack>
-        </Modal>
-    ); */
 }

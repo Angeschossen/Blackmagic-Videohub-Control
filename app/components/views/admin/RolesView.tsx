@@ -6,7 +6,7 @@ import { DataTable, DataTableColumn, DataTableItem } from "../../DataTableNew";
 import { CheckboxChoice, CheckBoxModal } from "../../modals/admin/CheckBoxModal";
 import { TOGGLEABLE_PERMISSIONS } from "@/app/authentification/permissions";
 import { stackTokens } from "@/app/util/styles";
-import {  getRequestHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { IRole } from "@/app/authentification/interfaces";
 import { IVideohub } from "@/app/interfaces/videohub";
 
@@ -128,10 +128,8 @@ export const RolesView = (props: Props) => {
     }
 
     return (
-        <Stack.Item>
-            <DataTable
-                columns={columns}
-                items={buildItems()} />
-        </Stack.Item>
+        <DataTable
+            columns={columns}
+            items={buildItems()} />
     );
 }

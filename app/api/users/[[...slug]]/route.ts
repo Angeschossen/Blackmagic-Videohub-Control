@@ -22,14 +22,14 @@ export async function GET(req: NextRequest,
     }
 
     const userId: string = slug[0];
-    if (slug.length < 2) {
-        if (userId != await getUserIdFromToken(req)) {
-            const hasEditPerm = await checkServerPermission(req, PERMISSION_USER_EDIT);
-            if (hasEditPerm != null) {
-                return hasEditPerm;
-            }
+    if (userId != await getUserIdFromToken(req)) {
+        const hasEditPerm = await checkServerPermission(req, PERMISSION_USER_EDIT);
+        if (hasEditPerm != null) {
+            return hasEditPerm;
         }
+    }
 
+    if (slug.length < 2) {
         return createResponseValid(req, await retrieveUserServerSide(userId));
 
     } else {

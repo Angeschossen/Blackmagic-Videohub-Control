@@ -1,5 +1,4 @@
-import { DefaultButton, Stack } from "@fluentui/react";
-import { Button, Tooltip } from "@fluentui/react-components";
+import { Button } from "@fluentui/react-components";
 import { DoorArrowRightFilled } from "@fluentui/react-icons";
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
@@ -21,14 +20,14 @@ export const ProtectedPage = (props: InputProps) => {
 
     const sess: any = session;
     if (sess.user.role?.permissions == undefined) {
-        return (<Stack style={{ display: 'flex', textAlign: 'center', justifyContent: "center", alignItems: "center", minHeight: '100vh' }}>
+        return (<div className="flex items-center justify-center h-screen">
             <h1>You haven&apos;t been assigned a role yet.</h1>
             <Button
                 icon={<DoorArrowRightFilled />}
                 iconPosition="after"
                 onClick={() => signOut()}
             >Logout and try again.</Button>
-        </Stack>)
+        </div>)
     }
 
     return <>{props.children}</>;

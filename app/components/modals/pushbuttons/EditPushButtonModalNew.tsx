@@ -7,13 +7,13 @@ import React from "react";
 import { PickColor } from "../../input/ColorPicker";
 import { InputState } from "../../input/HandledInputField";
 import { InputModal } from "../InputModalNew";
-import { stackTokens, useInputStyles } from "@/app/util/styles";
 import { getRandomKey } from "@/app/util/commonutils";
 import { useGetClientId } from "@/app/authentification/client-auth";
 import { getRequestHeader } from "@/app/util/fetchutils";
 import { IRoutingUpdate, IScene } from "@/app/interfaces/scenes";
 import { IVideohub } from "@/app/interfaces/videohub";
 import { hasRoleOutput, IUser } from "@/app/authentification/interfaces";
+import { AddRegular } from "@fluentui/react-icons";
 
 interface Props {
     onButtonUpdate: (button: IScene, action: "create" | "update" | "delete") => void
@@ -52,14 +52,21 @@ const RoutingComponent = (props: {
     const key: string | number = props.routing.actionId?.toString() || getRandomKey()
     const inputKey = `${key}_input`
     const outputKey = `${key}_output`
-    const styles = useInputStyles()
 
     const out = props.routing.output == undefined ? undefined : props.videohub.outputs[props.routing.output].label;
     const inp = props.routing.input == undefined ? undefined : props.videohub.inputs[props.routing.input].label;
 
     return (
-        <div className={styles.root}>
-            <h3>#{props.num}</h3>
+        <div className="flex flex-col">
+            <div>
+                <h3 className="float-left font-bold">#{props.num}</h3>
+                <Button
+                    className="float-right"
+                    size="small"
+                    icon={<DeleteRegular />}
+                    onClick={() => props.onDelete()}
+                />
+            </div>
             <Label htmlFor={outputKey}>Output</Label>
             <Dropdown
                 style={{ minWidth: 'auto' }}
@@ -90,11 +97,6 @@ const RoutingComponent = (props: {
                         {input.label}
                     </Option>)}
             </Dropdown>
-            <Button
-                size="small"
-                icon={<DeleteRegular />}
-                onClick={() => props.onDelete()}
-            />
         </div>
     )
 }
@@ -104,7 +106,6 @@ export const EditPushButtonModal = (props: Props) => {
     const inputSortingId = useId('input_sorting')
     const inputDescriptionId = useId('input_description')
     const inputDisplayId = useId('display')
-    const styles = useInputStyles()
     const userId = useGetClientId()
 
     const [name, setName] = React.useState<InputState>({ value: props.button?.label || "" })
@@ -259,12 +260,12 @@ export const EditPushButtonModal = (props: Props) => {
 
                 return Promise.resolve("Please specify at leat one complete routing with an input and output.")
             }}>
-            <Stack horizontal tokens={stackTokens}>
+            <div>
                 <Accordion multiple collapsible defaultOpenItems={[1, 3]}>
                     <AccordionItem value={1}>
                         <AccordionHeader size="large" icon={<TextboxRegular />}>General</AccordionHeader>
                         <AccordionPanel>
-                            <div className={styles.root}>
+                            <div className="flex flex-col">
                                 <Label htmlFor={inputNameId}>Name</Label>
                                 <Field>
                                     <Input
@@ -287,7 +288,7 @@ export const EditPushButtonModal = (props: Props) => {
                     <AccordionItem value={2}>
                         <AccordionHeader size="large" icon={<SlideHideRegular />}>Display</AccordionHeader>
                         <AccordionPanel>
-                            <div className={styles.root}>
+                            <div className="flex flex-col">
                                 <Label htmlFor={inputDisplayId}>Display</Label>
                                 <Switch
                                     checked={display}
@@ -315,37 +316,40 @@ export const EditPushButtonModal = (props: Props) => {
                     <AccordionItem value={3}>
                         <AccordionHeader size="large" icon={<VideoSwitchRegular />}>Routings</AccordionHeader>
                         <AccordionPanel>
-                            <Stack tokens={stackTokens}>
+                            <div>
                                 {routings.map((routing, index) =>
-                                    <RoutingComponent
-                                        num={index + 1}
-                                        user={props.user}
-                                        key={`routing_${index}`}
-                                        videohub={props.videohub}
-                                        routing={routing}
-                                        onSelectOutput={function (index?: number | undefined): void {
-                                            updateRouting(routing, index, routing.input)
-                                        }} onSelectInput={function (index?: number | undefined): void {
-                                            updateRouting(routing, routing.output, index)
-                                        }}
-                                        onDelete={() => {
-                                            removeRouting(routing)
-                                        }}
-                                    />
+                                    <div className="my-4">
+                                        <RoutingComponent
+                                            num={index + 1}
+                                            user={props.user}
+                                            key={`routing_${index}`}
+                                            videohub={props.videohub}
+                                            routing={routing}
+                                            onSelectOutput={function (index?: number | undefined): void {
+                                                updateRouting(routing, index, routing.input)
+                                            }} onSelectInput={function (index?: number | undefined): void {
+                                                updateRouting(routing, routing.output, index)
+                                            }}
+                                            onDelete={() => {
+                                                removeRouting(routing)
+                                            }}
+                                        />
+                                    </div>
                                 )}
                                 <Button
+                                    icon={<AddRegular />}
                                     onClick={() => {
                                         const arr = [...routings]
                                         arr.push(createRouting(undefined))
                                         setRoutings(arr)
                                     }}>
-                                    Add routing
+                                    Add Routing
                                 </Button>
-                            </Stack>
+                            </div>
                         </AccordionPanel>
                     </AccordionItem>
                 </Accordion>
-            </Stack>
+            </div>
         </InputModal>
     );
 }

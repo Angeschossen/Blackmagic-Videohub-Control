@@ -1,12 +1,11 @@
-import { Stack } from "@fluentui/react";
-import { Button, Dropdown, Input, InputProps, Label, Option, useId } from "@fluentui/react-components";
+import { Label } from "@fluentui/react";
+import { Button, Dropdown, Input, InputProps, Option, useId } from "@fluentui/react-components";
 import { Field } from "@fluentui/react-components";
 import { AddRegular, DeleteRegular } from "@fluentui/react-icons";
 import React from "react";
 import { InputState } from "../../input/HandledInputField";
 import { InputModal } from "../InputModalNew";
 import { TriggerType } from "@prisma/client";
-import { stackTokens, useInputStyles } from "@/app/util/styles";
 import { convertDateToLocal } from "@/app/util/dateutil";
 import { getRequestHeader } from "@/app/util/fetchutils";
 import { IScene, ISceneTrigger } from "@/app/interfaces/scenes";
@@ -73,7 +72,6 @@ const Trigger = (props: {
     const inputDaysId = useId('input_days')
     const inputTypeId = useId('input_type')
     const inputTimeId = useId('input_time')
-    const styles = useInputStyles()
 
     const onChangeTime: InputProps['onChange'] = (_ev, data) => {
         setTime({ value: data.value })
@@ -90,39 +88,44 @@ const Trigger = (props: {
 
     // InputField: Time
     return (
-        <Stack tokens={{ childrenGap: 10 }}>
-            <h3>#{props.num}</h3>
-            <Stack.Item>
-                <div className={styles.root}>
-                    <Label htmlFor={inputTypeId}>Type</Label>
-                    <Dropdown
-                        style={{ minWidth: 'auto' }}
-                        id={inputTypeId}
-                        defaultSelectedOptions={[props.trigger.type.toString().substring(0, 1).toUpperCase() + props.trigger.type.toString().substring(1).toLocaleLowerCase()]}
-                        defaultValue={type.toString().substring(0, 1).toUpperCase() + type.toString().substring(1).toLocaleLowerCase()}
-                        placeholder={"Select type"}
-                        onOptionSelect={(_event: any, data: any) => {
-                            const val = data.optionValue
-                            let t: TriggerType
-                            if (val === "Sunset") {
-                                t = "SUNSET"
-                            } else if (val === "Sunrise") {
-                                t = "SUNRISE"
-                            } else {
-                                t = "TIME"
-                            }
+        <div className="flex flex-col">
+            <div>
+                <h3 className="font-bold float-left">#{props.num}</h3>
+                <Button
+                    className="float-right"
+                    size="small"
+                    icon={<DeleteRegular />}
+                    onClick={() => props.onDelete()}
+                />
+            </div>
+            <Label htmlFor={inputTypeId}>Type</Label>
+            <Dropdown
+                style={{ minWidth: 'auto' }}
+                id={inputTypeId}
+                defaultSelectedOptions={[props.trigger.type.toString().substring(0, 1).toUpperCase() + props.trigger.type.toString().substring(1).toLocaleLowerCase()]}
+                defaultValue={type.toString().substring(0, 1).toUpperCase() + type.toString().substring(1).toLocaleLowerCase()}
+                placeholder={"Select type"}
+                onOptionSelect={(_event: any, data: any) => {
+                    const val = data.optionValue
+                    let t: TriggerType
+                    if (val === "Sunset") {
+                        t = "SUNSET"
+                    } else if (val === "Sunrise") {
+                        t = "SUNRISE"
+                    } else {
+                        t = "TIME"
+                    }
 
-                            props.onSelectType(t)
-                            setType(t)
-                        }}>
-                        <Option key={`${inputTypeId}_time`}>Time</Option>
-                        <Option key={`${inputTypeId}_sunrise`}>Sunrise</Option>
-                        <Option key={`${inputTypeId}_sunset`}>Sunset</Option>
-                    </Dropdown>
-                </div>
-            </Stack.Item>
-            {props.trigger.type === "TIME" ? <Stack.Item>
-                <div className={styles.root}>
+                    props.onSelectType(t)
+                    setType(t)
+                }}>
+                <Option key={`${inputTypeId}_time`}>Time</Option>
+                <Option key={`${inputTypeId}_sunrise`}>Sunrise</Option>
+                <Option key={`${inputTypeId}_sunset`}>Sunset</Option>
+            </Dropdown>
+
+            {props.trigger.type === "TIME" ?
+                <>
                     <Label htmlFor={inputTimeId}>Time</Label>
                     <Field id={inputTimeId}>
                         <Input
@@ -130,38 +133,29 @@ const Trigger = (props: {
                             value={time.value}
                             onChange={onChangeTime} />
                     </Field>
-                </div>
-            </Stack.Item> : undefined}
-            <Stack.Item>
-                <div className={styles.root}>
-                    <Label htmlFor={inputDaysId}>Days</Label>
-                    <Dropdown
-                        style={{ minWidth: 'auto' }}
-                        multiselect
-                        id={inputDaysId}
-                        defaultSelectedOptions={props.trigger.days.map((day: number) => days[day].label)}
-                        defaultValue={days.filter(d => props.trigger.days.indexOf(d.value) != -1).map(d => d.label).join(', ')}
-                        placeholder="Select days"
-                        onOptionSelect={(_event: any, data: any) => {
-                            const val = getDayFromValue(data.optionValue)?.value
-                            if (val != undefined) {
-                                props.onSelectDay(val)
-                            }
-                        }}>
-                        {days.map(day => {
-                            return <Option key={`${inputDaysId}_day_${day.value}`}>
-                                {day.label}
-                            </Option>
-                        })}
-                    </Dropdown>
-                    <Button
-                        size="small"
-                        icon={<DeleteRegular />}
-                        onClick={() => props.onDelete()}
-                    />
-                </div>
-            </Stack.Item>
-        </Stack>
+                </>
+                : undefined}
+            <Label htmlFor={inputDaysId}>Days</Label>
+            <Dropdown
+                style={{ minWidth: 'auto' }}
+                multiselect
+                id={inputDaysId}
+                defaultSelectedOptions={props.trigger.days.map((day: number) => days[day].label)}
+                defaultValue={days.filter(d => props.trigger.days.indexOf(d.value) != -1).map(d => d.label).join(', ')}
+                placeholder="Select days"
+                onOptionSelect={(_event: any, data: any) => {
+                    const val = getDayFromValue(data.optionValue)?.value
+                    if (val != undefined) {
+                        props.onSelectDay(val)
+                    }
+                }}>
+                {days.map(day => {
+                    return <Option key={`${inputDaysId}_day_${day.value}`}>
+                        {day.label}
+                    </Option>
+                })}
+            </Dropdown>
+        </div >
     )
 }
 
@@ -249,9 +243,7 @@ export const PushButtonScheduleModal = (props: { button: IScene, trigger: JSX.El
 
                 return Promise.resolve(undefined)
             }}>
-            <Stack tokens={stackTokens}>
-                {triggers.map((trigger, index) => createTriggerComponent(trigger, index))}
-            </Stack>
+            {triggers.map((trigger, index) => <div className="py-2">{createTriggerComponent(trigger, index)}</div>)}
             <Button
                 icon={<AddRegular />}
                 onClick={() => {

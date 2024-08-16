@@ -22,6 +22,11 @@ export async function GET(req: NextRequest,
 
     const { slug } = params;
     if (slug == undefined || slug.length < 1) {
+        const hasPerms = await checkServerPermission(req, PERMISSION_ROLE_EDIT);
+        if (hasPerms != null) {
+            return hasPerms;
+        }
+
         return createResponseValid(req, retrieveRolesServerSide());
     }
 
@@ -37,7 +42,6 @@ export async function GET(req: NextRequest,
         }
 
         case "admin-view": {
-            console.log("AAAAAAAAAA")
             const hasPerm = await checkServerPermissionCol(req, [PERMISSION_ROLE_EDIT, PERMISSION_USER_EDIT]);
             if (hasPerm != null) {
                 return hasPerm;
@@ -96,7 +100,7 @@ export async function DELETE(req: NextRequest,
 
         if (isNumeric(slug[0])) {
             const role: Role | undefined = getRoleById(Number(slug[0]));
-            if (role != undefined) {
+            if (role != undefined && role.editable) {
                 await getPrisma().role.delete({
                     where: {
                         id: role.id,
@@ -122,13 +126,7 @@ export async function PUT(req: NextRequest,
 
     const { slug } = params;
     if (slug == undefined || slug.length < 1) {
-        const hasPerm = await checkServerPermission(req, PERMISSION_ROLE_EDIT);
-        if (hasPerm != null) {
-            return hasPerm;
-        }
-
         const role: IRole = await req.json();
-        console.log(role)
         if (role != undefined) {
             console.log(role.name)
             role.name = role.name.trim()
