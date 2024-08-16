@@ -36,7 +36,7 @@ export const UsersView = (props: Props) => {
             const cells: JSX.Element[] = [
                 <TableCellLayout key={`${key}_username`}>{user.username}</TableCellLayout>,
                 <TableCellLayout key={`${key}_role`}>
-                    <Dropdown style={{ minWidth: 'auto' }} disabled={role != null && !role.editable} defaultSelectedOptions={selected ? [selected] : []} placeholder={selected || "Select a role"}
+                    <Dropdown style={{ minWidth: 'auto' }} disabled={role != null && !role.editable} defaultSelectedOptions={selected ? [selected] : []} placeholder={selected || "Select role"}
                         onOptionSelect={async (_event: any, data: any) => {
                             const name: string = data.optionValue;
                             const found: IRole | undefined = getRoleByName(props.roles, name)

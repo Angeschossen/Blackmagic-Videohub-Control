@@ -243,7 +243,7 @@ export const PushButtonScheduleModal = (props: { button: IScene, trigger: JSX.El
 
                 return Promise.resolve(undefined)
             }}>
-            {triggers.map((trigger, index) => <div className="py-2">{createTriggerComponent(trigger, index)}</div>)}
+            {triggers.map((trigger, index) => <div className="py-2" key={`trigger_${index}`}>{createTriggerComponent(trigger, index)}</div>)}
             <Button
                 icon={<AddRegular />}
                 onClick={() => {

@@ -318,7 +318,7 @@ export const EditPushButtonModal = (props: Props) => {
                         <AccordionPanel>
                             <div>
                                 {routings.map((routing, index) =>
-                                    <div className="my-4">
+                                    <div className="my-4" key={`routing_${index}`}>
                                         <RoutingComponent
                                             num={index + 1}
                                             user={props.user}
