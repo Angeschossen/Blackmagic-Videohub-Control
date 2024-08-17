@@ -23,8 +23,8 @@ model Videohub {
   activities      VideohubActivity[]
   roles_outputs   RoleOutput[]
   scenes_triggers SceneTrigger[]
-  latitude        Decimal            @default(29.752825746202255)
-  longitude       Decimal            @default(-95.37672758189905)
+  latitude        Decimal            
+  longitude       Decimal            
 
   @@map("videohubs")
 }
