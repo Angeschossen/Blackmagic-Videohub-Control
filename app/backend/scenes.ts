@@ -1,7 +1,7 @@
 import { getSunrise, getSunset } from 'sunrise-sunset-js';
 import { ICON_ERROR, ICON_SUCCESS, Videohub } from './videohubs';
 import { getPrisma } from './prismadb';
-import { PushButtonTrigger, TriggerType } from '@prisma/client';
+import { SceneTrigger, TriggerType } from '@prisma/client';
 import { getSecondOfDayUTC } from '../util/dateutil';
 
 export class Button {
@@ -58,7 +58,7 @@ export class Button {
         return false
     }
 
-    async scheduleNextTrigger(trigger: PushButtonTrigger) {
+    async scheduleNextTrigger(trigger: SceneTrigger) {
         this.time = trigger.time // update, wrap into new Date to prevent wrong time at client side
         if (this.scheduledTrigger != undefined) {
             this.videohub.onScheduledTimeChanged()
@@ -74,8 +74,8 @@ export class Button {
 
         this.scheduledTrigger = setTimeout(async () => {
             if (!this.cancelled) {
-                await this.videohub.executeButton(trigger.pushbutton_id).then(async result => {
-                    const label = await getLabelOfButton(trigger.pushbutton_id)
+                await this.videohub.executeButton(trigger.scene_id).then(async result => {
+                    const label = await getLabelOfButton(trigger.scene_id)
 
                     if (result != undefined) {
                         this.videohub.addFailedButton(this)
@@ -98,10 +98,10 @@ export class Button {
         this.info("Retrieving upcoming triggers.")
 
         const time = date
-        return await getPrisma().pushButtonTrigger.findMany({
+        return await getPrisma().sceneTrigger.findMany({
             where: {
                 videohub_id: this.videohub.data.id,
-                pushbutton_id: this.id,
+                scene_id: this.id,
                 day: time.getUTCDay(),
                 time: {
                     gte: time
@@ -116,9 +116,9 @@ export class Button {
 
 
 const BUTTON_SELECT = {
-    pushbutton_id: true,
+    scene_id: true,
     time: true,
-    pushbutton: {
+    scene: {
         select: {
             label: true,
             user_id: true,
@@ -127,7 +127,7 @@ const BUTTON_SELECT = {
 }
 
 async function updateSunriseSetType(videohub: Videohub, t: TriggerType, time: Date) {
-    return await getPrisma().pushButtonTrigger.updateMany({
+    return await getPrisma().sceneTrigger.updateMany({
         where: {
             type: t,
             videohub_id: videohub.data.id,
@@ -141,7 +141,7 @@ async function updateSunriseSetType(videohub: Videohub, t: TriggerType, time: Da
 
 
 export async function getLabelOfButton(buttonId: number): Promise<string | undefined> {
-    return await getPrisma().pushButton.findUnique({
+    return await getPrisma().scene.findUnique({
         where: {
             id: buttonId
         },
@@ -152,11 +152,11 @@ export async function getLabelOfButton(buttonId: number): Promise<string | undef
 }
 
 export async function retrievescheduledButton(videohub: Videohub, buttonId: number, time: Date) {
-    const res = await getPrisma().pushButtonTrigger.findFirst({
+    const res = await getPrisma().sceneTrigger.findFirst({
         where: {
             videohub_id: videohub.data.id,
             day: time.getDay(),
-            pushbutton_id: buttonId,
+            scene_id: buttonId,
             time: {
                 gte: time
             }
@@ -165,7 +165,7 @@ export async function retrievescheduledButton(videohub: Videohub, buttonId: numb
     })
 
     if (res != undefined) {
-        return new Button(videohub, buttonId, res.pushbutton.label, res.time, res.pushbutton.user_id)
+        return new Button(videohub, buttonId, res.scene.label, res.time, res.scene.user_id)
     } else {
         return undefined
     }
@@ -181,7 +181,7 @@ export async function retrieveScheduledButtonsToday(videohub: Videohub) {
     const time = new Date()
 
     console.log(`Retrieving buttons for date: ${time.toLocaleString()} Day: ${time.getUTCDay()}`)
-    const res = await getPrisma().pushButtonTrigger.findMany({
+    const res = await getPrisma().sceneTrigger.findMany({
         where: {
             videohub_id: videohub.data.id,
             day: time.getUTCDay(),
@@ -196,12 +196,12 @@ export async function retrieveScheduledButtonsToday(videohub: Videohub) {
     const done = new Set()
 
     for (const button of res) {
-        const id = button.pushbutton_id
+        const id = button.scene_id
         if (done.has(id)) {
             continue
         }
 
-        const b = new Button(videohub, id, button.pushbutton.label, button.time, button.pushbutton.user_id)
+        const b = new Button(videohub, id, button.scene.label, button.time, button.scene.user_id)
         buttons.push(b)
         done.add(id)
     }

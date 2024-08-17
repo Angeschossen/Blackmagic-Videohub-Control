@@ -12,7 +12,7 @@ import { ICancelScheduledSceneRequest, IPatchTriggersSceneRequest, IRoutingUpdat
 import { retrieveUserServerSide } from "../../users/[[...slug]]/server-users";
 import { isNumeric } from "@/app/util/mathutil";
 import { Button } from "@/app/backend/scenes";
-import { PushButton, PushButtonAction, PushButtonTrigger, TriggerType } from "@prisma/client";
+import { Scene, SceneAction, SceneTrigger, TriggerType } from "@prisma/client";
 import { removeSecondsFromDate, setDayOfWeek } from "@/app/util/dateutil";
 
 
@@ -136,7 +136,7 @@ export async function PUT(req: NextRequest,
                             return createResponseInvalidTransparentWithStatus(req, { message: "Invalid scene creation ID", status: 400 });
                         }
 
-                        const result: any = await getPrisma().pushButton.create({
+                        const result: any = await getPrisma().scene.create({
                             data: {
                                 videohub_id: videohub.id,
                                 label: pushButton.label,
@@ -152,13 +152,13 @@ export async function PUT(req: NextRequest,
                         const arr: IRoutingUpdate[] = [];
                         for (const action of pushButton.actions) {
                             const create = {
-                                pushbutton_id: result.id,
+                                scene_id: result.id,
                                 videohub_id: videohub.id,
                                 input_id: action.input_id,
                                 output_id: action.output_id,
-                            } as PushButtonAction;
+                            } as SceneAction;
 
-                            const res: IRoutingUpdate = await getPrisma().pushButtonAction.create({
+                            const res: IRoutingUpdate = await getPrisma().sceneAction.create({
                                 data: create
                             });
 
@@ -182,7 +182,7 @@ export async function PUT(req: NextRequest,
 
                             if (slug.length < 4) { // update existing scene, action segment missing
                                 const body = await req.json() as IScene;
-                                const r: PushButton = await getPrisma().pushButton.update({
+                                const r: Scene = await getPrisma().scene.update({
                                     where: {
                                         id: body.id,
                                     },
@@ -203,9 +203,9 @@ export async function PUT(req: NextRequest,
                                 };
 
                                 // check actions
-                                const existingActions: PushButtonAction[] = await getPrisma().pushButtonAction.findMany({
+                                const existingActions: SceneAction[] = await getPrisma().sceneAction.findMany({
                                     where: {
-                                        pushbutton_id: body.id,
+                                        scene_id: body.id,
                                     }
                                 });
 
@@ -217,7 +217,7 @@ export async function PUT(req: NextRequest,
                                 });
 
                                 // delete no longer existing ones
-                                await getPrisma().pushButtonAction.deleteMany({
+                                await getPrisma().sceneAction.deleteMany({
                                     where: {
                                         id: {
                                             in: del
@@ -231,7 +231,7 @@ export async function PUT(req: NextRequest,
                                 })) {
                                     const upd = body.actions.find(aa => aa.id === a.id);
                                     if (upd != undefined) {
-                                        const r: IRoutingUpdate = await getPrisma().pushButtonAction.update({
+                                        const r: IRoutingUpdate = await getPrisma().sceneAction.update({
                                             where: {
                                                 id: a.id,
                                             },
@@ -250,13 +250,13 @@ export async function PUT(req: NextRequest,
                                     .filter(a => a.id == -1 && result.actions.find(aa => aa.id === a.id) == undefined) // double check is creation (-1) and make sure it's not update
                                     .forEach(async action => {
                                         const create = {
-                                            pushbutton_id: result.id,
+                                            scene_id: result.id,
                                             videohub_id: videohub.id,
                                             input_id: action.input_id,
                                             output_id: action.output_id,
-                                        } as PushButtonAction
+                                        } as SceneAction
 
-                                        const rr: IRoutingUpdate = await getPrisma().pushButtonAction.create({
+                                        const rr: IRoutingUpdate = await getPrisma().sceneAction.create({
                                             data: create
                                         })
 
@@ -273,14 +273,14 @@ export async function PUT(req: NextRequest,
                                         const actions: IRoutingUpdate[] = body.actions;
 
                                         // delete old
-                                        await getPrisma().pushButtonTrigger.deleteMany({
+                                        await getPrisma().sceneTrigger.deleteMany({
                                             where: {
-                                                pushbutton_id: sceneId,
+                                                scene_id: sceneId,
                                             }
                                         });
 
                                         for (const trigger of triggers) {
-                                            let r: PushButtonTrigger[] = [];
+                                            let r: SceneTrigger[] = [];
                                             // make sure day only once
                                             const days: Set<number> = new Set(trigger.days);
 
@@ -299,9 +299,9 @@ export async function PUT(req: NextRequest,
                                                         t = TriggerType.SUNSET;
                                                     }
 
-                                                    const obj: PushButtonTrigger = {
+                                                    const obj: SceneTrigger = {
                                                         id: "",
-                                                        pushbutton_id: sceneId,
+                                                        scene_id: sceneId,
                                                         time: date,
                                                         type: t,
                                                         day: date.getUTCDay(),
@@ -319,12 +319,12 @@ export async function PUT(req: NextRequest,
                                             const len: number = r.length;
                                             if (len != 0) {
                                                 // save first to get id
-                                                const id = await getPrisma().pushButtonTrigger.create({
+                                                const id = await getPrisma().sceneTrigger.create({
                                                     data: r[0]
                                                 }).then(res => res.id);
 
                                                 r.splice(0, 1);
-                                                await getPrisma().pushButtonTrigger.createMany({
+                                                await getPrisma().sceneTrigger.createMany({
                                                     data: r.map(trigger => {
                                                         trigger.id = id
                                                         return trigger
@@ -529,7 +529,7 @@ export async function DELETE(req: NextRequest,
                     return canEdit;
                 }
 
-                await getPrisma().pushButton.delete({
+                await getPrisma().scene.delete({
                     where: {
                         id: id,
                     }

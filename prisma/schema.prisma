@@ -12,66 +12,66 @@ datasource db {
 }
 
 model Videohub {
-  id                 Int                 @id @default(autoincrement())
-  ip                 String              @unique
-  name               String              @unique
-  version            String
-  inputs             Input[]
-  outputs            Output[]
-  pushbuttons        PushButton[]
-  pushbuttonactions  PushButtonAction[]
-  activity           VideohubActivity[]
-  roleoutputs        RoleOutput[]
-  pushbuttontriggers PushButtonTrigger[]
-  latitude           Decimal             @default(29.752825746202255)
-  longitude          Decimal             @default(-95.37672758189905)
+  id              Int                @id @default(autoincrement())
+  ip              String             @unique
+  name            String             @unique
+  version         String
+  inputs          Input[]
+  outputs         Output[]
+  scenes          Scene[]
+  scenes_actions  SceneAction[]
+  activities      VideohubActivity[]
+  roles_outputs   RoleOutput[]
+  scenes_triggers SceneTrigger[]
+  latitude        Decimal            @default(29.752825746202255)
+  longitude       Decimal            @default(-95.37672758189905)
 
   @@map("videohubs")
 }
 
 model Input {
-  id                    Int
-  videohub              Videohub           @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
-  videohub_id           Int
-  label                 String
-  outputs               Output[]
-  pushbuttonactions     PushButtonAction[]
-  outputs_default_input Output[]           @relation("defaultInput")
+  id            Int
+  videohub      Videohub      @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id   Int
+  label         String
+  outputs       Output[]
+  scene_actions SceneAction[]
+  defaults      Output[]      @relation("input_default")
 
   @@id([videohub_id, id], name: "videohub_input")
   @@map("inputs")
 }
 
 model Output {
-  id                Int
-  videohub          Videohub            @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
-  videohub_id       Int
-  input             Input?              @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
-  input_id          Int?
-  input_default     Input?              @relation("defaultInput", fields: [videohub_id, input_default_id], references: [videohub_id, id], onDelete: Cascade)
-  input_default_id  Int?
-  label             String
-  pushbuttonactions PushButtonAction[]
-  roleoutputs       RoleOutput[]
-  PushButtonTrigger PushButtonTrigger[]
+  id               Int
+  videohub         Videohub       @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id      Int
+  input            Input?         @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
+  input_id         Int?
+  input_default    Input?         @relation("input_default", fields: [videohub_id, input_default_id], references: [videohub_id, id], onDelete: Cascade)
+  input_default_id Int?
+  label            String
+  scenes_actions   SceneAction[]
+  role_outputs     RoleOutput[]
+  scenes_triggers  SceneTrigger[]
 
   @@id([videohub_id, id], name: "videohub_output")
   @@map("outputs")
 }
 
-model PushButtonAction {
-  id                Int                 @id @default(autoincrement())
-  videohub          Videohub            @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
-  videohub_id       Int
-  output            Output              @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
-  output_id         Int
-  input             Input               @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
-  input_id          Int
-  pushbutton        PushButton          @relation(fields: [pushbutton_id], references: [id], onDelete: Cascade)
-  pushbutton_id     Int
-  PushButtonTrigger PushButtonTrigger[]
+model SceneAction {
+  id          Int            @id @default(autoincrement())
+  videohub    Videohub       @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  output      Output         @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id   Int
+  input       Input          @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
+  input_id    Int
+  scene       Scene          @relation(fields: [scene_id], references: [id], onDelete: Cascade)
+  scene_id    Int            @map("scene_id")
+  trigger     SceneTrigger[]
 
-  @@map("pushbuttons_actions")
+  @@map("scenes_actions")
 }
 
 enum TriggerType {
@@ -80,39 +80,39 @@ enum TriggerType {
   SUNSET
 }
 
-model PushButtonTrigger {
-  videohub      Videohub         @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
-  id            String           @default(cuid())
-  type          TriggerType      @default(TIME)
-  pushbutton_id Int
-  pushbutton    PushButton       @relation(fields: [pushbutton_id], references: [id], onDelete: Cascade)
-  time          DateTime         @db.Time()
-  day           Int
-  videohub_id   Int
-  output        Output           @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
-  output_id     Int
-  action        PushButtonAction @relation(fields: [action_id], references: [id], onDelete: Cascade)
-  action_id     Int
+model SceneTrigger {
+  videohub    Videohub    @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  id          String      @default(cuid())
+  type        TriggerType @default(TIME)
+  scene_id    Int         @map("scene_id")
+  scene       Scene       @relation(fields: [scene_id], references: [id], onDelete: Cascade)
+  time        DateTime    @db.Time()
+  day         Int
+  videohub_id Int
+  output      Output      @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id   Int
+  action      SceneAction @relation(fields: [action_id], references: [id], onDelete: Cascade)
+  action_id   Int
 
   @@id([action_id, id, day], name: "action_trigger_day")
-  @@map("pushbuttons_triggers")
+  @@map("scenes_triggers")
 }
 
-model PushButton {
-  id          Int                 @id @default(autoincrement())
-  videohub    Videohub            @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+model Scene {
+  id          Int            @id @default(autoincrement())
+  videohub    Videohub       @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
   videohub_id Int
-  label       String              
+  label       String
   description String
-  display     Boolean             @default(true)
-  sorting     Int                 @default(0)
-  actions     PushButtonAction[]
+  display     Boolean        @default(true)
+  sorting     Int            @default(0)
+  actions     SceneAction[]
   color       String?
-  user        User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user        User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id     String
-  triggers    PushButtonTrigger[]
+  triggers    SceneTrigger[]
 
-  @@map("pushbuttons")
+  @@map("scenes")
 }
 
 model VideohubActivity {
@@ -148,13 +148,13 @@ model RolePermission {
 }
 
 model User {
-  id           String       @id @default(cuid())
-  username     String       @unique /// @encrypted
-  usernameHash String?      @unique @map("username_hash") /// @encryption:hash(username)
+  id           String  @id @default(cuid())
+  username     String  @unique /// @encrypted
+  usernameHash String? @unique @map("username_hash") /// @encryption:hash(username)
   password     String /// @encrypted
-  role         Role?        @relation(fields: [role_id], references: [id], onDelete: SetNull)
+  role         Role?   @relation(fields: [role_id], references: [id], onDelete: SetNull)
   role_id      Int?
-  PushButton   PushButton[]
+  scenes       Scene[]
 
   @@map("users")
 }

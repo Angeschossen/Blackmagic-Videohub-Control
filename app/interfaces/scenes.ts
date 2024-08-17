@@ -1,4 +1,4 @@
-import { PushButtonTrigger, TriggerType } from "@prisma/client";
+import { SceneTrigger, TriggerType } from "@prisma/client";
 
 export interface IScene {
     id: number,
@@ -10,7 +10,7 @@ export interface IScene {
     actions: IRoutingUpdate[],
     color?: string
     user_id: string,
-    triggers: PushButtonTrigger[],
+    triggers: SceneTrigger[],
 }
 
 export interface IPatchTriggersSceneRequest {
@@ -40,7 +40,7 @@ export interface ISceneTrigger {
 
 export interface IRoutingUpdate {
     id: number,
-    pushbutton_id: number,
+    scene_id: number,
     videohub_id: number,
     output_id: number,
     input_id: number,

@@ -1,13 +1,11 @@
-import { hasRoleOutput, IUser } from "@/app/authentification/interfaces";
-import { PERMISSION_VIDEOHUB_EDIT, PERMISSION_VIDEOHUB_SCENES_EDIT } from "@/app/authentification/permissions";
-import { checkServerPermission, getUserFromToken, getUserIdFromToken, isUser } from "@/app/authentification/server-auth";
-import { ROLE_ADMIN_ID } from "@/app/backend/backend";
+import { PERMISSION_VIDEOHUB_SCENES_EDIT } from "@/app/authentification/permissions";
+import { checkServerPermission, getUserIdFromToken, isUser } from "@/app/authentification/server-auth";
 import { getPrisma } from "@/app/backend/prismadb";
-import { getScheduledButtons, getVideohub, getVideohubs, sendRoutingUpdate, updateDefaultInput } from "@/app/backend/videohubs"
+import { getScheduledButtons, getVideohub, getVideohubs } from "@/app/backend/videohubs"
 import { IScene, IUpcomingScene } from "@/app/interfaces/scenes";
 import { IVideohub, IVideohubActivity } from "@/app/interfaces/videohub"
 import { convertDateToUTC, setDayOfWeekUTC } from "@/app/util/dateutil";
-import { checkHasParams, createResponseInvalid, createResponseValid, ResponseData } from "@/app/util/requestutil";
+import { ResponseData } from "@/app/util/requestutil";
 import { VideohubActivity } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,7 +14,7 @@ export async function retrievePushButtonsServerSide(req: NextRequest, videohubId
 }
 
 export async function retrievePushButtonsServerSideByUser(userId: string, videohubId: number): Promise<IScene[]> {
-    return await getPrisma().pushButton.findMany({
+    return await getPrisma().scene.findMany({
         where: {
             videohub_id: videohubId,
             user_id: userId,
@@ -48,7 +46,7 @@ function getTriggerExportTime(time: Date, day: number): Date {
 }
 
 export async function getUserFromButton(id: number): Promise<string | undefined> {
-    return await getPrisma().pushButton.findUnique({
+    return await getPrisma().scene.findUnique({
         where: {
             id: id,
         },

@@ -2,7 +2,6 @@ import { getColorFromString, Label, Stack } from "@fluentui/react";
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Dropdown, Input, InputProps, Option, Switch, useId } from "@fluentui/react-components";
 import { Field } from "@fluentui/react-components";
 import { DeleteRegular, SlideHideRegular, TextboxRegular, VideoSwitchRegular } from "@fluentui/react-icons";
-import { PushButton, PushButtonAction } from "@prisma/client";
 import React from "react";
 import { PickColor } from "../../input/ColorPicker";
 import { InputState } from "../../input/HandledInputField";
@@ -14,6 +13,7 @@ import { IRoutingUpdate, IScene } from "@/app/interfaces/scenes";
 import { IVideohub } from "@/app/interfaces/videohub";
 import { hasRoleOutput, IUser } from "@/app/authentification/interfaces";
 import { AddRegular } from "@fluentui/react-icons";
+import { Scene, SceneAction } from "@prisma/client";
 
 interface Props {
     onButtonUpdate: (button: IScene, action: "create" | "update" | "delete") => void
@@ -134,7 +134,7 @@ export const EditPushButtonModal = (props: Props) => {
         setDescription(validateDescription(data.value))
     }
 
-    function createRouting(action?: PushButtonAction) {
+    function createRouting(action?: SceneAction) {
         if (action == undefined) {
             return { actionId: undefined, input: undefined, output: undefined }
         } else {
@@ -223,7 +223,7 @@ export const EditPushButtonModal = (props: Props) => {
                     actions.push({
                         id: action.actionId || -1,
                         input_id: action.input, output_id: action.output,
-                        pushbutton_id: props.button?.id || -1,
+                        scene_id: props.button?.id || -1,
                         videohub_id: props.videohub.id,
                     })
                 }
@@ -244,7 +244,7 @@ export const EditPushButtonModal = (props: Props) => {
 
                     const result = await fetch(`/api/videohubs/${button.videohub_id}/scenes${button.id == -1 ? '' : `/${button.id}`}`, getRequestHeader("PUT", button))
                     if (result.status === 200) {
-                        const r: PushButton = await result.json()
+                        const r: Scene = await result.json()
                         const buttonNew = {
                             ...r,
                             triggers: props.button?.triggers || [],

@@ -315,9 +315,9 @@ export class Videohub {
     async executeButton(buttonId: number): Promise<RoutingUpdateResult> {
         this.info(`Executing button ${buttonId}.`)
 
-        const actions = await getPrisma().pushButtonAction.findMany({
+        const actions = await getPrisma().sceneAction.findMany({
             where: {
-                pushbutton_id: buttonId,
+                scene_id: buttonId,
             },
             select: {
                 output_id: true,

@@ -30,7 +30,6 @@ export async function GET(req: NextRequest,
         return createResponseValid(req, retrieveRolesServerSide());
     }
 
-    console.log(slug)
     switch (slug[0]) {
         case "permissions": {
             const hasPerm = await checkServerPermission(req, PERMISSION_ROLE_EDIT);
@@ -128,7 +127,6 @@ export async function PUT(req: NextRequest,
     if (slug == undefined || slug.length < 1) {
         const role: IRole = await req.json();
         if (role != undefined) {
-            console.log(role.name)
             role.name = role.name.trim()
 
             // name len
