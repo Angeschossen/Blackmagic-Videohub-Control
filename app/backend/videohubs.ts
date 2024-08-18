@@ -571,7 +571,11 @@ export class Videohub {
                 outputs.push(output.id)
                 inputs.push(output.input_default_id)
             }
-        })
+        });
+
+        if (outputs.length < 1) {
+            return Promise.resolve({ result: true });
+        }
 
         return await this.sendRoutingUpdateRequest(outputs, inputs)
     }

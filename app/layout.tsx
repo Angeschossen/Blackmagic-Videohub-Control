@@ -22,7 +22,7 @@ export default function RootLayout({
         <FluentUIProvider>
           <SessionWrapper>
             <ProtectedPage>
-              <div className="flex min-h-full">
+              <div className="flex h-full m-0">
                 <Navigation>
                   <SocketProvider>
                     {children}

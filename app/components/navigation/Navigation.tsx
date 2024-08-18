@@ -69,10 +69,10 @@ export const Navigation = (props: LayoutProps) => {
     if (!isMounted) {
         return <></>
     } */
-
+    // h-dvh
     return (
         <>
-            <div className="h-100">
+            <div className="flex h-dvh">
                 <NavDrawer
                     selectedValue={selected}
                     open={isOpen}

@@ -77,7 +77,7 @@ export class Button {
                 await this.videohub.executeButton(trigger.scene_id).then(async result => {
                     const label = await getLabelOfButton(trigger.scene_id)
 
-                    if (result != undefined) {
+                    if (!result.result) {
                         this.videohub.addFailedButton(this)
                         await this.videohub.logActivity(`Scheduled scene failed: ${label}`, ICON_ERROR);
                     } else {
