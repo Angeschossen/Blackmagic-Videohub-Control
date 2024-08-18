@@ -292,6 +292,14 @@ export class Videohub {
         this.data.lastRoutingUpdate = new Date()
     }
 
+    getData(): IVideohub {
+        return this.data;
+    }
+
+    getId(): number {
+        return this.data.id;
+    }
+
     removeScheduledButton(buttonId: number) {
         this.info(`Removing scheduled button: ${buttonId}`)
         this.scheduledButtons = this.scheduledButtons.filter(b => {
@@ -385,12 +393,9 @@ export class Videohub {
     }
 
 
-    cancelScheduledButton(buttonId: number, cancel: boolean) {
-        const button = this.getScheduledButton(buttonId)
-        if (button != undefined) {
-            button.cancel(cancel)
-            this.emitScheduleChange()
-        }
+    cancelScheduledButton(scene: Button, cancel: boolean) {
+        scene.cancel(cancel)
+        this.emitScheduleChange()
     }
 
     getScheduledButton(buttonId: number) {
@@ -1059,6 +1064,14 @@ export async function setupVideohubs() {
 
 export function getVideohubs() {
     return getClients().map(client => client.data);
+}
+
+export function getVideohubClient(id: number): Videohub | undefined {
+    for (const hub of getClients()) {
+        if (hub.data.id === id) {
+            return hub;
+        }
+    }
 }
 
 export function getVideohub(id: number): IVideohub | undefined {

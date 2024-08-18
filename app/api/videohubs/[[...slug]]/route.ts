@@ -3,7 +3,7 @@ import { PERMISSION_VIDEOHUB_EDIT, PERMISSION_VIDEOHUB_SCENES_EDIT } from "@/app
 import { checkServerPermission, getUserFromToken, getUserIdFromToken } from "@/app/authentification/server-auth";
 import { ROLE_ADMIN_ID } from "@/app/backend/backend";
 import { getPrisma } from "@/app/backend/prismadb";
-import { executeButton, getScheduledButton, getVideohub, handleButtonDeletion, handleButtonReSchedule, sendRoutingUpdate, updateDefaultInput } from "@/app/backend/videohubs"
+import { executeButton, getScheduledButton, getVideohub, getVideohubClient, handleButtonDeletion, handleButtonReSchedule, sendRoutingUpdate, updateDefaultInput, Videohub } from "@/app/backend/videohubs"
 import { IVideohub, ViewData } from "@/app/interfaces/videohub"
 import { checkHasParams, checkSlugLength, createResponseInvalid, createResponseInvalidTransparentWithStatus, createResponseValid, ResponseData } from "@/app/util/requestutil";
 import { NextRequest, NextResponse } from "next/server";
@@ -422,13 +422,13 @@ export async function PATCH(req: NextRequest,
     const { slug } = params;
     if (slug != undefined && slug.length > 3 && isNumeric(slug[0])) {
 
-        const videohub: IVideohub | undefined = getVideohub(Number(slug[0]));
+        const videohub: Videohub | undefined = getVideohubClient(Number(slug[0]));
         if (videohub != undefined) {
 
             switch (slug[1]) {
                 case "scenes": {
                     if (isNumeric(slug[2])) {
-                        const scene: Button | undefined = getScheduledButton(videohub.id, Number(slug[2]));
+                        const scene: Button | undefined = getScheduledButton(videohub.getId(), Number(slug[2]));
                         if (scene == undefined) {
                             return createResponseInvalidTransparentWithStatus(req, { message: "Scene does not exist or isn't scheduled.", status: 404 });
                         }
@@ -446,7 +446,7 @@ export async function PATCH(req: NextRequest,
                                     return hasParams;
                                 }
 
-                                scene.cancel(cancel);
+                                videohub.cancelScheduledButton(scene, cancel);
                                 return createResponseValid(req, { result: true })
                             }
 

@@ -68,7 +68,7 @@ const VideohubView = () => {
     const router = useRouter();
     const { socket, isConnected } = useSocket();
 
-    const socketHandlerRef = useRef<{ videohubs?: IVideohub[], onVideohubUpdate: (e: VideohubUpdate) => void, handleReceivedUpcomingScenes: (scenes: IUpcomingScene[]) => void }>({
+    const socketHandlerRef = useRef<{ videohubs?: IVideohub[], videohub?: IVideohub, onVideohubUpdate: (e: VideohubUpdate) => void, handleReceivedUpcomingScenes: (scenes: IUpcomingScene[]) => void }>({
         videohubs: undefined,
         onVideohubUpdate(e) {
             const videohubs = socketHandlerRef.current.videohubs;
@@ -132,7 +132,9 @@ const VideohubView = () => {
             }
         },
         handleReceivedUpcomingScenes(scenes) {
-            setUpcomingScenes(scenes.filter(scene => scene.userId === userId && scene.videohubId === videohub?.id))
+            setUpcomingScenes(scenes.filter(scene => {
+                return scene.userId === userId && scene.videohubId === socketHandlerRef.current.videohub?.id;
+            }))
         },
     });
 
@@ -145,6 +147,10 @@ const VideohubView = () => {
     useEffect(() => {
         socketHandlerRef.current.videohubs = videohubs;
     }, [videohubs]);
+
+    useEffect(() => {
+        socketHandlerRef.current.videohub = videohub;
+    }, [videohub]);
 
     useEffect(() => {
         fetch(`/api/videohubs/view-data${params?.videohub == undefined ? '' : `?videohub=${params.videohub}`}`).then(res => {

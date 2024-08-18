@@ -17,16 +17,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html className="h-full m-0">
+      <body className="h-full m-0">
         <FluentUIProvider>
           <SessionWrapper>
             <ProtectedPage>
-              <Navigation>
-                <SocketProvider>
-                  {children}
-                </SocketProvider>
-              </Navigation>
+              <div className="flex min-h-full">
+                <Navigation>
+                  <SocketProvider>
+                    {children}
+                  </SocketProvider>
+                </Navigation>
+              </div>
             </ProtectedPage>
           </SessionWrapper>
         </FluentUIProvider>

@@ -71,48 +71,50 @@ export const Navigation = (props: LayoutProps) => {
     } */
 
     return (
-        <div className="flex h-screen">
-            <NavDrawer
-                selectedValue={selected}
-                open={isOpen}
-                type={isDesktop ? "inline" : "overlay"}
-                onNavItemSelect={e => {
-                    e.preventDefault()
+        <>
+            <div className="h-100">
+                <NavDrawer
+                    selectedValue={selected}
+                    open={isOpen}
+                    type={isDesktop ? "inline" : "overlay"}
+                    onNavItemSelect={e => {
+                        e.preventDefault()
 
-                    const item: any = e.target
-                    const id: string = item?.id
-                    router.push(`..${id}`)
-                    setSelected(id);
+                        const item: any = e.target
+                        const id: string = item?.id
+                        router.push(`..${id}`)
+                        setSelected(id);
 
-                    if (!isDesktop) {
-                        setIsOpen(false)
-                    }
-                }}
-            >
-                <NavDrawerHeader>{renderHamburgerWithToolTip()}</NavDrawerHeader>
-                <NavDrawerBody>
-                    <NavItem icon={<Home />} value="/" id="/">
-                        Home
-                    </NavItem>
-                    <NavItem icon={<Videohubs />} value="/videohubs" id="/videohubs">
-                        Videohubs
-                    </NavItem>
-                    {canEditRoles.current && canEditUsers.current &&
-                        <>
-                            < NavDivider />
-                            <NavItem icon={<Administration />} value="/admin" id="/admin">
-                                Administration
-                            </NavItem>
-                        </>
-                    }
-                </NavDrawerBody>
-            </NavDrawer>
+                        if (!isDesktop) {
+                            setIsOpen(false)
+                        }
+                    }}
+                >
+                    <NavDrawerHeader>{renderHamburgerWithToolTip()}</NavDrawerHeader>
+                    <NavDrawerBody>
+                        <NavItem icon={<Home />} value="/" id="/">
+                            Home
+                        </NavItem>
+                        <NavItem icon={<Videohubs />} value="/videohubs" id="/videohubs">
+                            Videohubs
+                        </NavItem>
+                        {canEditRoles.current && canEditUsers.current &&
+                            <>
+                                < NavDivider />
+                                <NavItem icon={<Administration />} value="/admin" id="/admin">
+                                    Administration
+                                </NavItem>
+                            </>
+                        }
+                    </NavDrawerBody>
+                </NavDrawer>
+            </div>
             <div className="flex-1 justify-items-center md:justify-items-start items-start m-5">
                 {!isOpen && renderHamburgerWithToolTip()}
                 <div>
                     {props.children}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
