@@ -12,8 +12,6 @@ import * as React from "react";
 
 import {
     Tooltip,
-    makeStyles,
-    tokens,
 } from "@fluentui/react-components";
 import {
     ContactCard20Filled,
@@ -49,13 +47,6 @@ export const Navigation = (props: LayoutProps) => {
     const [isOpen, setIsOpen] = React.useState(isDesktop);
     const [selected, setSelected] = React.useState(usePathname())
     const router = useRouter();
-    //const [isMounted, setIsMounted] = useState(false);
-
-    /*
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
-    */
 
     const renderHamburgerWithToolTip = () => {
         return (
@@ -65,15 +56,11 @@ export const Navigation = (props: LayoutProps) => {
         );
     };
 
-    /*
-    if (!isMounted) {
-        return <></>
-    } */
-    // h-dvh
     return (
-        <>
-            <div className="flex h-dvh">
+        <div className="flex min-h-screen">
+            <div className="flex-initial">
                 <NavDrawer
+                    className="min-h-full"
                     selectedValue={selected}
                     open={isOpen}
                     type={isDesktop ? "inline" : "overlay"}
@@ -115,6 +102,6 @@ export const Navigation = (props: LayoutProps) => {
                     {props.children}
                 </div>
             </div>
-        </>
+        </div >
     );
 };

@@ -230,33 +230,27 @@ const VideohubView = () => {
                     />}
                 {videohub &&
                     <div className='mt-10'>
-                        <div>
-                            <h1 className='text-3xl font-bold'>Scenes</h1>
-                            {isDekstop &&
-                                <div className='flex justify-end'>
-                                    <ScheduledButtons
-                                        videohub={videohub}
-                                        scheduledButtons={upcomingScenes}
-                                    />
-                                </div>
-                            }
+                        <div className='flex justify-between'>
+                            <h1 className='text-3xl font-bold my-1'>Scenes</h1>
+                            <ScheduledButtons
+                                videohub={videohub}
+                                scheduledButtons={upcomingScenes}
+                            />
                         </div>
-                        <div className='my-1'>
-                            <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
-                                <Button
-                                    icon={<EditRegular />}
-                                    disabled={!canEditPushButtons(canEdit, videohub)}
-                                    onClick={() => {
-                                        if (videohub == null) {
-                                            return
-                                        }
+                        <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
+                            <Button
+                                icon={<EditRegular />}
+                                disabled={!canEditPushButtons(canEdit, videohub)}
+                                onClick={() => {
+                                    if (videohub == null) {
+                                        return;
+                                    }
 
-                                        router.push(`../videohubs/scenes?videohub=${videohub.id}`);
-                                    }}>
-                                    Edit
-                                </Button>
-                            </Tooltip>
-                        </div>
+                                    router.push(`../videohubs/scenes?videohub=${videohub.id}`);
+                                }}>
+                                Edit
+                            </Button>
+                        </Tooltip>
                         <div className='my-5'>
                             <PushButtonsList
                                 pushbuttons={scenes.filter(button => button.display)}

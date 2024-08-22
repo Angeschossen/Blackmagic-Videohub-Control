@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html,
+body {
+    /* ensure the available document space is the full height of the viewport */
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+.container {
+    overflow: hidden;
+    position: relative;
+    height:100%; /* <-- make the containing element full height */
+}
+.leftwrapper {
+    background-color: #0b7582;
+    bottom: 0;
+    float: left;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 8%;
+    bottom:0; /* <-- anchor the element to both the top and the bottom of the viewport */
+}
+.rightwrapper {
+    float: left;
+    margin-left: 8%;
+    width: 92%;
+}

@@ -3,11 +3,16 @@
 import { SessionProvider } from "next-auth/react"
 
 import React from 'react'
+import { ProtectedPage } from "../providers/session-provider";
 
-const SessionWrapper = ({ children }: { children: React.ReactNode }) => {
+const SessionHandler = ({ children }: { children: React.ReactNode }) => {
     return (
-        <SessionProvider>{children}</SessionProvider>
+        <SessionProvider>
+            <ProtectedPage>
+                {children}
+            </ProtectedPage>
+        </SessionProvider>
     )
 }
 
-export default SessionWrapper
+export default SessionHandler;

@@ -2,7 +2,6 @@
 import * as React from "react";
 import { IVideohub } from "../interfaces/videohub";
 import { IoIosCheckmarkCircle, IoIosInformationCircle, IoIosWarning } from "react-icons/io";
-import { IconType } from "react-icons/lib";
 
 interface InputProps {
     videohub?: IVideohub,

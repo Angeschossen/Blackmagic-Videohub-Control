@@ -90,7 +90,7 @@ export async function getVideohubActivityServerSide() {
                 time: 'desc',
             }
         ],
-        take: 8,
+        take: 15,
     }).then((res: VideohubActivity[]) => {
         return res as IVideohubActivity[]
     })

@@ -15,10 +15,6 @@ export interface DataTableItem {
     cells: JSX.Element[],
 }
 
-interface TableData {
-    items?: DataTableItem[],
-}
-
 export interface DataItem {
     key: string | number,
 }

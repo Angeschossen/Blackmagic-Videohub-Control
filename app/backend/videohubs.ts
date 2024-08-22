@@ -13,7 +13,7 @@ export const ICON_ERROR: string = "Error"
 export const ICON_SUCCESS: string = "Accept"
 const ICON_CONNECTION_SUCCESS: string = "NetworkTower";
 
-/* Videohub statics */
+/* Videohub */
 const VIDEOHUB_PORT: number = 9990;
 const CONNECTION_HEALT_CHECK_INTERVAL: number = 60000;
 const REQUEST_TIMEOUT: number = 5000;
@@ -36,9 +36,6 @@ const PROTOCOL_ACKNOWLEDGED: string = "ACK";
 const PROTOCOL_VIDEOHUB_DEVICE: string = "VIDEOHUB DEVICE:"
 const PROTOCOL_OUTPUT_LABELS: string = "OUTPUT LABELS:"
 const PROTOCOL_VIDEO_OUTPUT_ROUTING: string = "VIDEO OUTPUT ROUTING:"
-const PROTOCOL_FRIENDLY_NAME: string = "Friendly name:"
-const PROTOCOL_LATEST_VERSION: string = "2.8"
-
 
 function getLines(input: string): string[] {
     const lines = input.split("\n");
@@ -109,30 +106,6 @@ class InputChangeRequest {
         this.ackList = new Array(outputs.length);
     }
 
-    /*
-    ack(output, input) {
-        let count = 0;
-
-        for (let i = 0; i < this.outputs.length; i++) {
-            // it can happen that a push button has two identical routing updates, if we don't use found, the request will never complete.
-            if (this.outputs[i] === output && this.inputs[i] === input) {
-                this.ackList[i] = true;
-                count++;
-            } else {
-                if (this.ackList[i] === true) {
-                    count++;
-                }
-            }
-        }
-
-        if (count >= this.ackList.length) {
-            this.onSuccess();
-            return true;
-        }
-
-        return false;
-    } */
-
     send(videohub: Videohub) {
         let send = `${PROTOCOL_VIDEO_OUTPUT_ROUTING}`
         for (let i = 0; i < this.outputs.length; i++) {
@@ -158,92 +131,6 @@ class Output {
         this.input_id = null
         this.videohub = videohub
     }
-
-    /*
-    stopSchedule() {
-        clearTimeout(this.scheduledTrigger)
-    } 
-
-    async scheduleNextTrigger(date) {
-        this.stopSchedule()
-
-        const next = await this.retrieveUpcomingTriggers(date)
-        if (next.length == 0) {
-            return
-        }
-
-        const trigger = next[0]
-        const hour = trigger.time.getUTCHours()
-        const minutes = trigger.time.getUTCMinutes()
-        const seconds = trigger.time.getUTCSeconds()
-
-        const now = new Date()
-        trigger.time.setTime(now.getTime())
-        trigger.time.setHours(hour)
-        trigger.time.setMinutes(minutes)
-        trigger.time.setSeconds(seconds)
-
-        // diff
-        const diff = trigger.time - convert_date_to_utc(now)
-        this.videohub.info(`Next trigger for output ${this.id} is in ${diff / 1000} second(s).`)
-
-        this.scheduledTrigger = setTimeout(async () => {
-            const actions = await prismadb.pushButtonAction.findMany({
-                where: {
-                    pushbutton_id: trigger.pushbutton_id
-                },
-                select: {
-                    output_id: true,
-                    input_id: true,
-                }
-            })
-
-            if (actions.length === 0) {
-                this.videohub.info("Scheduled button doesn't exist any longer.")
-                return
-            }
-
-            const outputs = []
-            const inputs = []
-            for (const action of actions) {
-                outputs.push(action.output_id)
-                inputs.push(action.input_id)
-            }
-
-            this.videohub.sendRoutingUpdateRequest(outputs, inputs).then(async result => {
-                if (result != undefined) {
-                    await this.videohub.logActivity(`Scheduled routing update failed.`, ICON_ERROR);
-                } else {
-                    await this.videohub.logActivity(`Scheduled routing update was successful.`, ICON_SUCCESS);
-                }
-
-                // go to next
-                //this.scheduleNextTrigger(new Date())
-            })
-        }, 2000)
-    }
-
-    async retrieveUpcomingTriggers(date) {
-        const time = new Date(date)
-        return await prismadb.pushButtonTrigger.findMany({
-            where: {
-                videohub_id: this.videohub.data.id,
-                output_id: this.id,
-                day: time.getDay(),
-                time: {
-                    gte: time
-                }
-            },
-            orderBy: {
-                time: 'asc'
-            }
-        }).then(res => {
-            return res.map(tr => {
-                //tr.time = new Date(tr.time.toString()+" UTC")
-                return tr
-            })
-        })
-    } */
 
     updateRouting(input_id: number) {
         this.videohub.info(`Updating routing: ${this.id} ${input_id}`);
@@ -276,20 +163,20 @@ class Output {
 
 export class Videohub {
     data: IVideohub;
-    client: any | undefined = undefined;
-    connecting: NodeJS.Timeout | undefined = undefined;
+    client: any | undefined;
+    connecting: NodeJS.Timeout | undefined;
     requestQueque: InputChangeRequest[] = [];
     outputsObjs: Array<Output> = new Array(0);
     connectionAttempt: number = 0;
-    checkConnectionHealthId: NodeJS.Timeout | undefined = undefined;
+    checkConnectionHealthId: NodeJS.Timeout | undefined;
     scheduledButtons: Button[] = [];
     failedButtonsCache: TTLCacheService = new TTLCacheService({ max: 100, ttl: 1000 * 60 * 10 }); // keep them 10 minutes until they expire
     socket: any;
 
     constructor(data: IVideohub) {
-        this.data = data
-        this.data.connected = false
-        this.data.lastRoutingUpdate = new Date()
+        this.data = data;
+        this.data.connected = false;
+        this.data.lastRoutingUpdate = new Date();
     }
 
     getData(): IVideohub {
@@ -301,27 +188,27 @@ export class Videohub {
     }
 
     removeScheduledButton(buttonId: number) {
-        this.info(`Removing scheduled button: ${buttonId}`)
+        this.info(`Removing scheduled button: ${buttonId}`);
         this.scheduledButtons = this.scheduledButtons.filter(b => {
             if (b.id === buttonId) {
-                b.stopSchedule()
-                return false
+                b.stopSchedule();
+                return false;
             }
 
-            return true
+            return true;
         })
 
-        this.emitScheduleChange()
+        this.emitScheduleChange();
     }
 
     addFailedButton(button: Button) {
-        this.info(`Adding failed button ${button.id}.`)
-        button.stopSchedule() // make sure it's always stopped, fallback
-        this.failedButtonsCache.set(button.id, button)
+        this.info(`Adding failed button ${button.id}.`);
+        button.stopSchedule(); // make sure it's always stopped, fallback
+        this.failedButtonsCache.set(button.id, button);
     }
 
     async executeButton(buttonId: number): Promise<RoutingUpdateResult> {
-        this.info(`Executing button ${buttonId}.`)
+        this.info(`Executing button ${buttonId}.`);
 
         const actions = await getPrisma().sceneAction.findMany({
             where: {
@@ -331,21 +218,21 @@ export class Videohub {
                 output_id: true,
                 input_id: true,
             }
-        })
+        });
 
         if (actions.length === 0) {
-            this.info("Button doesn't exist any longer.")
-            return Promise.resolve({ result: false, message: "Button doesn't exist any longer." })
+            this.info("Button doesn't exist any longer.");
+            return Promise.resolve({ result: false, message: "Button doesn't exist any longer." });
         }
 
         const outputs = []
         const inputs = []
         for (const action of actions) {
-            outputs.push(action.output_id)
-            inputs.push(action.input_id)
+            outputs.push(action.output_id);
+            inputs.push(action.input_id);
         }
 
-        return this.sendRoutingUpdateRequest(outputs, inputs)
+        return this.sendRoutingUpdateRequest(outputs, inputs);
     }
 
     async retryFailedButtons() {
@@ -361,7 +248,7 @@ export class Videohub {
                     await this.logActivity(`Rescheduled scene applied successfully: ${label}`, ICON_SUCCESS)
                     this.failedButtonsCache.delete(failed.id) // only remove if success
                 }
-            })
+            });
         }
     }
 
@@ -378,20 +265,9 @@ export class Videohub {
         this.info(`Buttons scheduled: ${this.scheduledButtons.length}`)
     }
 
-    /*
-    async retrieveUpcomingTriggers(date, output_id) {
-        const output = this.getOutput(output_id)
-        if (output == undefined) {
-            return []
-        }
-
-        return output.retrieveUpcomingTriggers(date)
-    } */
-
     emitScheduleChange = () => {
         emit(`videohubUpdate_scheduled`, this.getScheduledButtons())
     }
-
 
     cancelScheduledButton(scene: Button, cancel: boolean) {
         scene.cancel(cancel)
@@ -526,15 +402,13 @@ export class Videohub {
     }
 
     checkConnectionHealth() {
-        //this.info("Checking connection health.");
 
         const hub = this;
-        checkConnection(this.data.ip, VIDEOHUB_PORT, 5000).then(function () {
-            //hub.info("Connection is healthy.");
+        checkConnection(this.data.ip, VIDEOHUB_PORT, 5000).then(() => {
             hub.checkConnectionHealthId = setTimeout(() => {
                 hub.checkConnectionHealth();
             }, CONNECTION_HEALT_CHECK_INTERVAL);
-        }, async function (err) {
+        }, async (err) => {
             hub.info("Videohub detected as not reachable.");
             console.error(err);
             await hub.onClose();
@@ -590,30 +464,32 @@ export class Videohub {
         this.info(`Attempting connection to videohub (#${this.connectionAttempt}).`);
 
         if (this.socket != undefined) {
-            throw new Error("Already connected")
+            throw new Error("Already connected");
         }
 
-        const client = new net.Socket();
-        client.connect({
-            port: VIDEOHUB_PORT,
-            host: this.data.ip,
-        }, async () => {
-            this.info("Successfully connected.");
-            this.client = client
-            this.data.connected = true
-            this.connectionAttempt = 0
-            this.clearReconnect()
-            this.scheduleCheckConnectionHealth()
-            this.onUpdate("connection_established", {})
+const client = new net.Socket();
+client.connect({
+    port: VIDEOHUB_PORT,
+    host: this.data.ip,
+}, async () => {
+    this.info("Successfully connected.");
+    this.client = client;
+    this.data.connected = true;
+    await this.sendDefaultRouting();
+
+            this.connectionAttempt = 0;
+            this.clearReconnect();
+            this.scheduleCheckConnectionHealth();
+            this.onUpdate("connection_established", {});
 
             setTimeout(async () =>
-                await this.sendDefaultRouting(), 10000)
+                await this.sendDefaultRouting(), 10000);
 
             if (!isInitial) {
-                await this.logActivity("Connection established.", ICON_CONNECTION_SUCCESS)
+                await this.logActivity("Connection established.", ICON_CONNECTION_SUCCESS);
             }
 
-            await this.retryFailedButtons()
+            await this.retryFailedButtons();
         });
 
         client.on("data", data => {
@@ -622,24 +498,24 @@ export class Videohub {
 
             try {
                 // run async
-                this.handleReceivedData(text)
+                this.handleReceivedData(text);
             } catch (ex) {
-                console.log("Failed to handle received text: " + ex)
-                console.log(ex)
+                console.log("Failed to handle received text: " + ex);
+                console.log(ex);
             }
         })
 
         client.on("close", async () => {
             this.info(`Connection closed (#${this.connectionAttempt})`);
-            await this.onClose()
+            await this.onClose();
         })
 
         client.on("end", async () => {
             this.info(`Connection ended (#${this.connectionAttempt})`);
-            await this.onClose()
+            await this.onClose();
         })
 
-        client.on("error", console.error)
+        client.on("error", console.error);
     }
 
     isConnected() {
@@ -946,12 +822,6 @@ export class Videohub {
         const outputData = this.data.outputs[output_id]
         outputData.input_id = input_id
         output.updateRouting(input_id)
-
-        /*
-        this.requestQueque = this.requestQueque.filter(req => {
-            return !req.ack(output_id, input_id) // remove request and call success 
-        })*/
-
         this.data.lastRoutingUpdate = new Date()
         await output.save(outputData.label)
     }

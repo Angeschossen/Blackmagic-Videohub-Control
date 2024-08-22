@@ -54,25 +54,25 @@ export const authOptions: NextAuthOptions = {
     },
     adapter: PrismaAdapter(getPrisma()),
     callbacks: {
-        async jwt({ token, user, account, profile, isNewUser }: any) {
-            if (user != undefined) {
-                token.user = user; // Bereits authentifiziert
-            } else {
-                const registeredUser: IUser | undefined = await retrieveUserServerSide(token.user?.id);
-                if (registeredUser == undefined) {
-                    return undefined; // Der Benutzer existiert nicht mehr
-                } else {
-                    token.user = registeredUser; // Dem Token werden die Informationen angehängt.
-                }
-            }
+async jwt({ token, user, account, profile, isNewUser }: any) {
+    if (user != undefined) {
+        token.user = user; // Der Benuter ist bereits authentifiziert.
+    } else {
+        const registeredUser: IUser | undefined = await retrieveUserServerSide(token.user?.id);
+        if (registeredUser == undefined) {
+            return undefined; // Der Benutzer existiert nicht mehr.
+        } else {
+            token.user = registeredUser; // Dem Token werden die Informationen angehängt.
+        }
+    }
 
-            return token;
-        },
+    return token;
+},
 
         async session({ session, token, user }: any) {
             // Send properties to the client, like an access_token and user id from a provider.
-            session.user = token.user
-            session.version = VERSION
+            session.user = token.user;
+            session.version = VERSION;
             return session;
         },
     },

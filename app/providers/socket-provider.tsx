@@ -23,7 +23,7 @@ export const useSocket = () => {
     return useContext(SocketContext);
 }
 
-export const SocketProvider = ({ children }: {
+export const WebsocketProvider = ({ children }: {
     children: React.ReactNode
 }) => {
     const [socket, setSocket] = useState(null);
@@ -36,12 +36,12 @@ export const SocketProvider = ({ children }: {
         });
 
         function onConnect() {
-            console.log("Socket connected")
+            console.log("Websocket connected")
             setIsConnected(true);
         }
 
         function onDisconnect() {
-            console.log("Socket disconnected")
+            console.log("Websocket disconnected")
             setIsConnected(false);
         }
 

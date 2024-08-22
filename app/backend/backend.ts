@@ -14,10 +14,11 @@ export class Role implements IRole {
     id: number;
     editable: boolean;
     name: string;
-    rolePermissions: RolePermission[] = []
-    permissions: string[];
     outputs: RoleOutput[];
     permissionsSet: Set<string> = new Set<string>;
+
+    rolePermissions: RolePermission[] = [];
+    permissions: string[];
 
     constructor(id: number, editable: boolean, name: string, permissions: string[], outputs: RoleOutput[]) {
         this.id = id;
@@ -51,15 +52,15 @@ async function createUser(user: UserNameCreation, role: Role | undefined) {
             username: user.username,
         }
     }) == undefined) {
-        console.log(`Creating user: ${user.username}`)
-        if (user.password == undefined || user.username == undefined || user.password === "") {
+        console.log(`Creating user: ${user.username}`);
+        if (user.password == undefined
+            || user.username == undefined || user.password === "") {
             console.log(`Invalid user creation: ${user.username}`);
         } else {
             await getPrisma().user.create({
                 data: {
                     username: user.username,
-                    password: user.password,
-                    role_id: role?.id,
+                    password: user.password, role_id: role?.id,
                 }
             });
         }
@@ -146,7 +147,7 @@ export async function setRolePermissions(roleId: number, perms: RolePermission[]
 
     const role = getRoleById(roleId)
     if (role == undefined || (!role.editable && !allowNonEditable)) {
-        return Promise.reject("Role not editable or does not exist")
+        return Promise.reject("Role not editable or does not exist");
     }
 
     // check toggleable
@@ -154,12 +155,12 @@ export async function setRolePermissions(roleId: number, perms: RolePermission[]
         for (const perm of perms) {
             if (TOGGLEABLE_PERMISSIONS.indexOf(perm.permission) == -1) {
                 console.log(`Non toggleable permission supplied at set perms: ${perm.permission}`)
-                return Promise.reject("Not toggleable permissions supplied")
+                return Promise.reject("Not toggleable permissions supplied");
             }
         }
 
         // filter toggleable
-        perms = perms.filter(perm => TOGGLEABLE_PERMISSIONS.indexOf(perm.permission) != -1)
+        perms = perms.filter(perm => TOGGLEABLE_PERMISSIONS.indexOf(perm.permission) != -1);
     }
 
     // delete
@@ -167,23 +168,24 @@ export async function setRolePermissions(roleId: number, perms: RolePermission[]
         where: {
             role_id: role.id,
         }
-    })
+    });
 
     // create
-    await getPrisma().rolePermission.createMany({
+    return getPrisma().rolePermission.createMany({
         data: perms
-    })
-
-    role.setPermissions(perms)
-    return true
+    }).then(() => {
+        role.setPermissions(perms);
+        return true;
+    });
 }
 
-export async function setRoleOutputs(roleId: number, videohubId: number, outputs: RoleOutput[], allowNonEditable: boolean) {
-    console.log("Setting role outputs for role: " + roleId)
+export async function setRoleOutputs(roleId: number, videohubId: number,
+    outputs: RoleOutput[], allowNonEditable: boolean) {
+    console.log("Setting role outputs for role: " + roleId);
 
-    const role = getRoles().get(roleId)
+    const role = getRoles().get(roleId);
     if (role == undefined || (!role.editable && !allowNonEditable)) {
-        return false
+        return false;
     }
 
     // delete
@@ -192,36 +194,38 @@ export async function setRoleOutputs(roleId: number, videohubId: number, outputs
             role_id: role.id,
             videohub_id: videohubId,
         }
-    })
+    });
 
     // create
-    await getPrisma().roleOutput.createMany({
-        data: outputs.filter(output => output.videohub_id === videohubId && output.role_id === roleId)
-    })
-
-    role.outputs = outputs
-    return true
+    return getPrisma().roleOutput.createMany({
+        data: outputs.filter(output => output.videohub_id === videohubId
+            && output.role_id === roleId)
+    }).then(() => {
+        role.outputs = outputs;
+        return true;
+    });
 }
 
 export function addRole(data: any) {
-    const prev = getRoleById(data.id)
+    const prev = getRoleById(data.id);
     if (prev == undefined || prev.editable) {
-        getRoles().set(data.id, new Role(data.id, true, data.name, data.permissions?.map((perm: any) => perm.permission) || [], data.outputs || []))
+        getRoles().set(data.id, new Role(data.id, true, data.name, data.permissions?.map((perm: any) => perm.permission) || [], data.outputs || []));
     }
 }
 
 export async function setup() {
-    await setupRoles()
-    await setupVideohubs()
+    await setupRoles();
+    await setupVideohubs();
 
-    // set
+    // set role outputs
     getVideohubs().forEach(async hub => {
+        // for admin we always want perm to all outputs from all videohubs - always
         await setRoleOutputs(ROLE_ADMIN_ID, hub.id, hub.outputs.map((output: any) => {
             return {
                 videohub_id: hub.id,
                 output_id: output.id,
                 role_id: ROLE_ADMIN_ID,
             }
-        }), true)
-    })
+        }), true);
+    });
 }
