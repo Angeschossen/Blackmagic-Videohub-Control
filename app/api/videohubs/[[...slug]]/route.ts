@@ -570,7 +570,7 @@ export async function GET(req: NextRequest,
         switch (slug[1]) {
             case "scenes": {
                 if (slug.length < 3) {
-                    return createResponseValid(req, await retrievePushButtonsServerSide(req, videohub.id));
+                    return createResponseValid(req, await retrievePushButtonsServerSide(await getUserIdFromToken(req), videohub.id));
                 }
 
                 switch (slug[2]) {
@@ -631,7 +631,7 @@ export async function GET(req: NextRequest,
                 let buttons: any[]
                 let scheduled: IUpcomingScene[]
                 if (selected != undefined) {
-                    buttons = await retrievePushButtonsServerSide(req, selected.id)
+                    buttons = await retrievePushButtonsServerSide(userId, selected.id)
                     scheduled = retrieveScheduledButtons(selected.id, userId)
                 } else {
                     buttons = []

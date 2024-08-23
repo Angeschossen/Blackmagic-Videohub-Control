@@ -3,6 +3,8 @@ import { getRoleById } from "../backend/backend";
 import { IUser } from "./interfaces";
 import { createResponseInvalid, createResponseInvalidTransparent, createResponseUnauthorized, ResponseData } from "../util/requestutil";
 import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "../api/auth/[...nextauth]/auth-util";
+import { getServerSession } from "next-auth";
 
 
 export async function isUser(req: NextRequest, userId?: string): Promise<NextResponse<ResponseData> | null> {
@@ -25,6 +27,16 @@ export async function checkServerPermissionCol(req: NextRequest, permission?: st
     }
 
     return Promise.resolve(null);
+}
+
+export async function getUserServerSide() {
+    const session = await getServerSession(authOptions);
+    const user: IUser | undefined = session?.user as IUser;
+    if (user == undefined) {
+        throw new Error("User must be logged in.")
+    }
+
+    return user;
 }
 
 export async function getUserIdFromToken(req: NextRequest) {

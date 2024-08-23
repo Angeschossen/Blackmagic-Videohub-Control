@@ -3,14 +3,15 @@ import { checkServerPermission, getUserIdFromToken, isUser } from "@/app/authent
 import { getPrisma } from "@/app/backend/prismadb";
 import { getScheduledButtons, getVideohub, getVideohubs } from "@/app/backend/videohubs"
 import { IScene, IUpcomingScene } from "@/app/interfaces/scenes";
-import { IVideohub, IVideohubActivity } from "@/app/interfaces/videohub"
+import { IVideohub, IVideohubActivity, ViewData } from "@/app/interfaces/videohub"
 import { convertDateToUTC, setDayOfWeekUTC } from "@/app/util/dateutil";
 import { ResponseData } from "@/app/util/requestutil";
 import { VideohubActivity } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { retrieveUserServerSide } from "../../users/[[...slug]]/server-users";
 
-export async function retrievePushButtonsServerSide(req: NextRequest, videohubId: number) {
-    return retrievePushButtonsServerSideByUser(await getUserIdFromToken(req), videohubId)
+export async function retrievePushButtonsServerSide(userId: string, videohubId: number) {
+    return retrievePushButtonsServerSideByUser(userId, videohubId)
 }
 
 export async function retrievePushButtonsServerSideByUser(userId: string, videohubId: number): Promise<IScene[]> {
@@ -94,4 +95,33 @@ export async function getVideohubActivityServerSide() {
     }).then((res: VideohubActivity[]) => {
         return res as IVideohubActivity[]
     })
+}
+
+export async function getVideohubViewDataServerSide(videohub: number, userId: string) {
+    let selected: IVideohub | undefined = videohub != undefined ? getVideohub(videohub) : undefined;
+    const hubs: IVideohub[] = retrieveVideohubsServerSide();
+
+    if (selected == undefined) {
+        if (hubs.length != 0) {
+            selected = hubs[0];
+        }
+    }
+
+    let scenes: IScene[];
+    let scheduled: IUpcomingScene[];
+    if (selected != undefined) {
+        scenes = await retrievePushButtonsServerSide(userId, selected.id);
+        scheduled = retrieveScheduledButtons(selected.id, userId);
+    } else {
+        scenes = [];
+        scheduled = [];
+    }
+
+    return {
+        user: JSON.parse(JSON.stringify(await retrieveUserServerSide(userId))),
+        videohubs: JSON.parse(JSON.stringify(hubs)),
+        videohub: selected ? selected.id : 0,
+        scenes: JSON.parse(JSON.stringify(scenes)),
+        upcomingScenes: JSON.parse(JSON.stringify(scheduled))
+    } as ViewData;
 }
