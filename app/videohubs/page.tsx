@@ -1,11 +1,8 @@
-import { getServerSession } from "next-auth/next";
-import { retrieveUserServerSide } from "../api/users/[[...slug]]/server-users";
 import { retrievePushButtonsServerSide, retrieveScheduledButtons, retrieveVideohubsServerSide } from "../api/videohubs/[[...slug]]/server-videohubs";
 import { getVideohub } from "../backend/videohubs";
 import { IScene, IUpcomingScene } from "../interfaces/scenes";
 import { IVideohub } from "../interfaces/videohub";
 import VideohubView from "./VideohubView";
-import { authOptions } from "../api/auth/[...nextauth]/auth-util";
 import { IUser } from "../authentification/interfaces";
 import { getUserServerSide } from "../authentification/server-auth";
 

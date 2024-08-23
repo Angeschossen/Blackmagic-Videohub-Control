@@ -467,15 +467,15 @@ export class Videohub {
             throw new Error("Already connected");
         }
 
-const client = new net.Socket();
-client.connect({
-    port: VIDEOHUB_PORT,
-    host: this.data.ip,
-}, async () => {
-    this.info("Successfully connected.");
-    this.client = client;
-    this.data.connected = true;
-    await this.sendDefaultRouting();
+        const client = new net.Socket();
+        client.connect({
+            port: VIDEOHUB_PORT,
+            host: this.data.ip,
+        }, async () => {
+            this.info("Successfully connected.");
+            this.client = client;
+            this.data.connected = true;
+            await this.sendDefaultRouting();
 
             this.connectionAttempt = 0;
             this.clearReconnect();
