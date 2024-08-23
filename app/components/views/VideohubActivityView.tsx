@@ -2,7 +2,7 @@
 
 import { IVideohubActivity } from '@/app/interfaces/videohub';
 import { ActivityItem, Icon, Link, mergeStyleSets, Text } from '@fluentui/react';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import * as React from 'react';
 
 const classNames = mergeStyleSets({
@@ -15,6 +15,7 @@ const classNames = mergeStyleSets({
 });
 
 export const VideohubActivityView = (p: { activityItems: IVideohubActivity[] | null }) => {
+  const router = useRouter();
 
   return (
     <div>
@@ -28,7 +29,7 @@ export const VideohubActivityView = (p: { activityItems: IVideohubActivity[] | n
                 <Link
                   key={item.id + "_videohub"}
                   onClick={(_event: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement | HTMLElement>) => {
-                    redirect(`../videohub?videohub=${item.videohub_id}`);
+                    router.push(`../videohubs?videohub=${item.videohub_id}`);
                   }}
                 >{item.title}</Link>,
               ]} activityDescription={[<Text key={item.id + "_text"} className={classNames.nameText}>{item.description}</Text>]} key={item.id} className={classNames.exampleRoot} />
