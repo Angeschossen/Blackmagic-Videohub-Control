@@ -1,16 +1,14 @@
 "use client"
+
 import { Button } from "@fluentui/react-components";
 import { AddRegular } from "@fluentui/react-icons";
-import React, { useEffect } from "react";
+import React from "react";
 import { IVideohub } from "../../interfaces/videohub";
 import { IScene } from "../../interfaces/scenes";
 import { IUser } from "../../authentification/interfaces";
 import { VideohubPage } from "../../components/videohub/VideohubPage";
 import { EditPushButtonModal } from "../../components/modals/pushbuttons/EditPushButtonModalNew";
 import { PushButtonsTableView } from "../../components/views/pushbuttons/PushButtonsTableView";
-import { Loading } from "../../components/common/LoadingScreen";
-import { useGetClientId } from "../../authentification/client-auth";
-import { useSearchParams } from "next/navigation";
 
 
 export const PushButtonListNew = (props: { videohub?: IVideohub, scenes: IScene[], user: IUser }) => {
@@ -56,8 +54,7 @@ export const PushButtonListNew = (props: { videohub?: IVideohub, scenes: IScene[
     }
 
     if (props.videohub == undefined) {
-        console.log("LOOOOADING")
-        return <Loading />;
+        return <p>No videohub selected.</p>;
     }
 
     return (

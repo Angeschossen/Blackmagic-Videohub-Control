@@ -2,10 +2,10 @@
 
 import { Button, Switch, SwitchOnChangeData, Toaster, Tooltip, useId, useToastController } from '@fluentui/react-components';
 import { EditRegular } from '@fluentui/react-icons';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef } from 'react';
 import { IScene, IUpcomingScene } from '../interfaces/scenes';
-import { IOutput, IRoutingUpdateCollection, IVideohub, ViewData } from '../interfaces/videohub';
+import { IOutput, IRoutingUpdateCollection, IVideohub } from '../interfaces/videohub';
 import { IUser } from '../authentification/interfaces';
 import { useViewType } from '../components/views/DesktopView';
 import { useClientSession, useGetClientId } from '../authentification/client-auth';
@@ -230,20 +230,21 @@ const VideohubView = (props: {
                                 scheduledButtons={upcomingScenes}
                             />
                         </div>
-                        <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
-                            <Button
-                                icon={<EditRegular />}
-                                disabled={!canEditPushButtons(canEdit, videohub)}
-                                onClick={() => {
-                                    if (videohub == null) {
-                                        return;
-                                    }
+                        {videohubs.length > 0 &&
+                            <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
+                                <Button
+                                    icon={<EditRegular />}
+                                    disabled={!canEditPushButtons(canEdit, videohub)}
+                                    onClick={() => {
+                                        if (videohub == null) {
+                                            return;
+                                        }
 
-                                    router.push(`../videohubs/scenes?videohub=${videohub.id}`);
-                                }}>
-                                Edit
-                            </Button>
-                        </Tooltip>
+                                        router.push(`../videohubs/scenes?videohub=${videohub.id}`);
+                                    }}>
+                                    Edit
+                                </Button>
+                            </Tooltip>}
                         <div className='my-5'>
                             <PushButtonsList
                                 pushbuttons={scenes.filter(button => button.display)}
