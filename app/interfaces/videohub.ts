@@ -57,6 +57,11 @@ export interface IInput {
     label: string,
 }
 
+export interface IRoutingPair {
+    output: number, 
+    input: number,
+}
+
 export interface IOutput {
     id: number,
     input_id: number | null,

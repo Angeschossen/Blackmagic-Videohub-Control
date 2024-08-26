@@ -30,7 +30,8 @@ export const WebsocketProvider = ({ children }: {
     const [isConnected, setIsConnected] = useState(false);
 
     useEffect(() => {
-        const socketInstance = new (ClientIO as any)(process.env.NEXT_PUBLIC_SITE_URL!, {
+        const socketInstance = new (ClientIO as any)
+        (process.env.NEXT_PUBLIC_SITE_URL!, {
             path: "/api/socket/io",
             addTrailingSlash: false,
         });

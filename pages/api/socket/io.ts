@@ -50,12 +50,6 @@ const ioHandler = async (req: NextApiRequest, res: NextApiResponseServerIo) => {
         io.on('disconnect', () => {
             console.log(`User disconnected from websocket.`)
         });
-
-        /*
-        setInterval(() => {
-            io.emit("hello", { test: "Test 123" });
-        }, 1000, 1000);
-        */
     }
 
     res.end();

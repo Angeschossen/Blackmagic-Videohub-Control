@@ -42,7 +42,11 @@ export function getSecondOfDay(date: Date): number {
 }
 
 export function getSecondOfDayUTC(date: Date): number {
-    return date.getUTCSeconds() + (60 * (date.getUTCMinutes() + (60 * date.getUTCHours())))
+    return date.getUTCSeconds() + (60 * (date.getUTCMinutes() + (60 * date.getUTCHours())));
+}
+
+export function getMillisecondOfDayUTC(date: Date): number {
+    return date.getUTCMilliseconds() + (1000 * (date.getUTCSeconds() + (60 * (date.getUTCMinutes() + (60 * date.getUTCHours())))));
 }
 
 export function getTriggerExportTimeWithoutDay(time: Date) {

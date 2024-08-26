@@ -23,8 +23,8 @@ model Videohub {
   activities      VideohubActivity[]
   roles_outputs   RoleOutput[]
   scenes_triggers SceneTrigger[]
-  latitude        Decimal            
-  longitude       Decimal            
+  latitude        Decimal
+  longitude       Decimal
 
   @@map("videohubs")
 }
@@ -84,10 +84,10 @@ model SceneTrigger {
   videohub    Videohub    @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
   id          String      @default(cuid())
   type        TriggerType @default(TIME)
-  scene_id    Int         @map("scene_id")
-  scene       Scene       @relation(fields: [scene_id], references: [id], onDelete: Cascade)
   time        DateTime    @db.Time()
   day         Int
+  scene_id    Int         @map("scene_id")
+  scene       Scene       @relation(fields: [scene_id], references: [id], onDelete: Cascade)
   videohub_id Int
   output      Output      @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
   output_id   Int

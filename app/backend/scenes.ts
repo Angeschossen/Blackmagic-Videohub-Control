@@ -2,7 +2,7 @@ import { getSunrise, getSunset } from 'sunrise-sunset-js';
 import { ICON_ERROR, ICON_SUCCESS, Videohub } from './videohubs';
 import { getPrisma } from './prismadb';
 import { SceneTrigger, TriggerType } from '@prisma/client';
-import { getSecondOfDayUTC } from '../util/dateutil';
+import { getMillisecondOfDayUTC, getSecondOfDayUTC } from '../util/dateutil';
 
 export class Button {
     id: number;
@@ -59,45 +59,44 @@ export class Button {
     }
 
     async scheduleNextTrigger(trigger: SceneTrigger) {
-        this.time = trigger.time // update, wrap into new Date to prevent wrong time at client side
+        this.time = trigger.time; // update, wrap into new Date to prevent wrong time at client side
         if (this.scheduledTrigger != undefined) {
-            this.videohub.onScheduledTimeChanged()
+            this.videohub.onScheduledTimeChanged();
         }
 
-        this.stopSchedule()
+        // stop current schedule
+        this.stopSchedule();
 
-        // diff
-        const at = getSecondOfDayUTC(trigger.time)
-        const curr = getSecondOfDayUTC(new Date())
-        const diff = at - curr
-        this.info(`Next trigger (at ${at}) is in ${diff} second(s). Current second of day: ${curr}`)
+        // calculate difference in milliseconds
+        const atMilli = getMillisecondOfDayUTC(trigger.time);
+        const currMilli = getMillisecondOfDayUTC(new Date());
+        const diffMillis = atMilli - currMilli;
+        this.info(`Next trigger (at ${atMilli} millisecond(s) of the day) is in ${diffMillis} millisecond(s). Current millisecond of the day: ${currMilli}`);
 
         this.scheduledTrigger = setTimeout(async () => {
             if (!this.cancelled) {
                 await this.videohub.executeButton(trigger.scene_id).then(async result => {
-                    const label = await getLabelOfButton(trigger.scene_id)
+                    const label = await getLabelOfButton(trigger.scene_id);
 
                     if (!result.result) {
-                        this.videohub.addFailedButton(this)
+                        this.videohub.addFailedButton(this);
                         await this.videohub.logActivity(`Scheduled scene failed: ${label}`, ICON_ERROR);
                     } else {
                         await this.videohub.logActivity(`Scheduled scene applied successfully: ${label}`, ICON_SUCCESS);
                     }
 
-                    // go to next
-                    await this.goToNext()
-                })
+                    await this.goToNext();
+                });
             } else {
-                // go to next
-                await this.goToNext()
+                await this.goToNext();
             }
-        }, diff * 1000)
+        }, diffMillis);
     }
 
     async retrieveUpcomingTriggers(date: Date) {
-        this.info("Retrieving upcoming triggers.")
+        this.info("Retrieving upcoming triggers.");
 
-        const time = date
+        const time = date;
         return await getPrisma().sceneTrigger.findMany({
             where: {
                 videohub_id: this.videohub.data.id,
@@ -110,7 +109,7 @@ export class Button {
             orderBy: {
                 time: 'asc'
             }
-        })
+        });
     }
 }
 

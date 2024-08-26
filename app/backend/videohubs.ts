@@ -6,7 +6,7 @@ import { TTLCacheService } from '../util/TTLCache';
 import { Button, getLabelOfButton, retrievescheduledButton, retrieveScheduledButtonsToday, updateSunriseSet } from './scenes';
 import { emit } from './websockets';
 import { IUpcomingScene } from '../interfaces/scenes';
-import { IOutput, IVideohub, RoutingUpdateResult } from '../interfaces/videohub';
+import { IOutput, IRoutingPair, IVideohub, RoutingUpdateResult } from '../interfaces/videohub';
 
 /* Icons */
 export const ICON_ERROR: string = "Error"
@@ -365,7 +365,7 @@ export class Videohub {
         });
     }
 
-    onUpdate(reason: string, info: any) {
+    emitUpdate(reason: string, info: any) {
         emit(`videohubUpdate`, {
             data: this.data,
             reason: reason,
@@ -480,7 +480,7 @@ export class Videohub {
             this.connectionAttempt = 0;
             this.clearReconnect();
             this.scheduleCheckConnectionHealth();
-            this.onUpdate("connection_established", {});
+            this.emitUpdate("connection_established", {});
 
             setTimeout(async () =>
                 await this.sendDefaultRouting(), 10000);
@@ -547,7 +547,7 @@ export class Videohub {
         this.data.connected = false;
 
         if (wasConnected) {
-            this.onUpdate("connection_lost", {});
+            this.emitUpdate("connection_lost", {});
             await this.logActivity("Connection lost.", ICON_ERROR)
         }
 
@@ -769,22 +769,18 @@ export class Videohub {
             }
 
             case PROTOCOL_VIDEO_OUTPUT_ROUTING: {
-                let i = 0
-                const arr = []
+                let processedBlockLines = 0;
+                const arr: IRoutingPair[] = [];
                 for (const line of getCorrespondingLines(lines, index)) {
-                    const data = line.split(" ")
-                    const output = Number(data[0]), input = Number(data[1])
-                    await this.updateRouting(output, input)
-                    arr.push({
-                        output: output,
-                        input: input
-                    })
-
-                    i++
+                    const data = line.split(" ");
+                    const output = Number(data[0]), input = Number(data[1]);
+                    await this.updateRouting(output, input);
+                    arr.push({ output: output, input: input });
+                    processedBlockLines++
                 }
 
-                this.onUpdate("routing_update", { changes: arr })
-                return i
+                this.emitUpdate("routing_update", { changes: arr });
+                return processedBlockLines;
             }
 
             case PROTOCOL_ACKNOWLEDGED: {
@@ -850,29 +846,31 @@ export class Videohub {
     }
 }
 
-let cronMidnight: any = undefined
+let cronMidnight: any = undefined;
 async function executeNightly() {
-    console.log(`${new Date().toLocaleString()} Executing nightly cronjob.`)
+    console.log(`${new Date().toLocaleString()}: Executing nightly cronjob.`);
+
     try {
         for (const hub of getClients()) {
-            await updateSunriseSet(hub)
-            await hub.scheduleButtons()
+            await updateSunriseSet(hub);
+            await hub.scheduleButtons();
         }
 
-        // delete old ones
-        const old = new Date()
-        old.setMonth(old.getMonth() - 1)
+        // delete old activities
+        const old = new Date();
+        old.setMonth(old.getMonth() - 1);
+
         await getPrisma().videohubActivity.deleteMany({
             where: {
                 time: {
                     lte: old,
                 }
             }
-        })
+        });
 
     } catch (ex) {
-        console.log("Error at nightly job.")
-        console.log(ex)
+        console.log("Error while executing nightly cronjob.");
+        console.log(ex);
     }
 }
 

@@ -6,9 +6,9 @@ import { AdminView } from "./AdminView";
 
 const Page = async ({
     searchParams,
-  }: {
+}: {
     searchParams?: { [key: string]: string | string[] | undefined };
-  }) => {
+}) => {
     const { videohub } = searchParams ?? { videohub: "" }; // prevent static page build error
 
     const hubs: IVideohub[] = retrieveVideohubsServerSide();
