@@ -20,38 +20,7 @@ export async function PUT(req: NextRequest,
     { params }: { params: { slug?: string[] } }) {
     const { slug } = params;
 
-    if (slug == undefined || slug.length < 1) { // create new videohub
-        const hasPerms = await checkServerPermission(req, PERMISSION_VIDEOHUB_EDIT);
-        if (hasPerms != null) {
-            return hasPerms;
-        }
-
-        const videohub = await req.json() as IVideohub;
-        if (videohub.id != -1) {
-            return createResponseInvalidTransparentWithStatus(req, { message: "Invalid videohub ID for creation.", status: 400 });
-        }
-
-        videohub.name = videohub.name.trim();
-        await getPrisma().videohub.create({
-            data: {
-                name: videohub.name,
-                ip: videohub.ip,
-                latitude: videohub.latitude,
-                longitude: videohub.longitude,
-                version: videohub.version,
-            }
-        });
-
-        // also add outputs to admin
-        await getPrisma().roleOutput.createMany({
-            data: videohub.outputs.map(output => {
-                return { output_id: output.id, role_id: ROLE_ADMIN_ID, videohub_id: videohub.id }
-            })
-        });
-
-        return createResponseValid(req);
-
-    } else { // update existing videohub
+    if (slug != undefined && slug.length > 0) { // update existing videohub
         const requestData = await getRequestBaseData(req, slug, { allowNone: false }); // dont allow none, since existing
         if (requestData.response != undefined) {
             return requestData.response;
@@ -129,7 +98,7 @@ export async function PUT(req: NextRequest,
                         return hasPerm;
                     }
 
-                  
+
                     if (slug.length < 3) { // create new scene
                         const pushButton: IScene = await req.json();
                         if (pushButton.id != -1) {
@@ -378,17 +347,46 @@ async function getOutputsFromRequest(req: NextRequest, user: IUser, videohub: nu
 export async function POST(req: NextRequest,
     { params }: { params: { slug?: string[] } }
 ) {
-    const hasPerms = await checkServerPermission(req);
-    if (hasPerms != null) {
-        return hasPerms;
-    }
+    const { slug } = params;
 
-    const user: IUser | undefined = await getUserFromToken(req)
-    if (user != undefined) {
+    if (slug == undefined || slug.length < 1) { // ist PUT /api/videohubs
+        const hasPerms = await checkServerPermission(req, PERMISSION_VIDEOHUB_EDIT);
+        if (hasPerms != null) { return hasPerms; }
 
-        const { slug } = params;
-        if (slug != undefined && slug.length > 0) {
+        const videohub: IVideohub = await req.json();
+        if (videohub.id != -1) {
+            return createResponseInvalidTransparentWithStatus(req,
+                { message: "Invalid videohub ID for creation.", status: 400 });
+        }
 
+        videohub.name = videohub.name.trim();
+        await getPrisma().videohub.create({
+            data: {
+                name: videohub.name,
+                ip: videohub.ip,
+                latitude: videohub.latitude,
+                longitude: videohub.longitude,
+                version: videohub.version,
+            }
+        });
+
+        // also add outputs to admin
+        await getPrisma().roleOutput.createMany({
+            data: videohub.outputs.map(output => {
+                return { output_id: output.id, role_id: ROLE_ADMIN_ID, videohub_id: videohub.id }
+            })
+        });
+
+        return createResponseValid(req);
+
+    } else {
+        const hasPerms = await checkServerPermission(req);
+        if (hasPerms != null) {
+            return hasPerms;
+        }
+
+        const user: IUser | undefined = await getUserFromToken(req)
+        if (user != undefined) {
             if (isNumeric(slug[0])) { // videohub specific
                 if (slug.length > 1) {
                     const videohub: IVideohub | undefined = getVideohub(Number(slug[0]));
@@ -405,6 +403,7 @@ export async function POST(req: NextRequest,
                     }
                 }
             }
+
         }
     }
 

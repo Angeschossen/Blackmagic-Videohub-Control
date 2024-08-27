@@ -100,15 +100,9 @@ export class Button {
         return await getPrisma().sceneTrigger.findMany({
             where: {
                 videohub_id: this.videohub.data.id,
-                scene_id: this.id,
-                day: time.getUTCDay(),
-                time: {
-                    gte: time
-                }
-            },
-            orderBy: {
-                time: 'asc'
-            }
+                scene_id: this.id, day: time.getUTCDay(),
+                time: { gte: time }
+            }, orderBy: { time: 'asc' }
         });
     }
 }

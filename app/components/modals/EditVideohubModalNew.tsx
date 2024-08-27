@@ -88,7 +88,7 @@ export const EditVideohubModal = (props: Props) => {
                     videohub.latitude = latitude
                 }
 
-                await fetch('/api/videohubs', getRequestHeader("PUT", videohub)).then(async res => {
+                await fetch('/api/videohubs', getRequestHeader("POST", videohub)).then(async res => {
                     if (res.status === 200) {
                         props.onVideohubUpdate(await res.json())
                     }
