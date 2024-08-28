@@ -20,8 +20,8 @@ export const ProtectedPage = ({ children }: { children: React.ReactNode }) => {
     const sess: any = session;
     if (sess.user.role?.permissions == undefined) { // user doesn't have a role yet
         return (
-            <div className="flex items-center justify-center h-screen">
-                <h1>You haven&apos;t been assigned a role yet.</h1>
+            <div className="flex flex-col space-y-2 items-center justify-center h-screen">
+                <h1 className="text-2xl font-bold">You haven&apos;t been assigned a role yet.</h1>
                 <Button
                     icon={<DoorArrowRightFilled />}
                     iconPosition="after"
