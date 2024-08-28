@@ -33,7 +33,7 @@ const Home = bundleIcon(MegaphoneLoud20Filled, MegaphoneLoud20Regular);
 const Administration = bundleIcon(ContactCard20Filled, ContactCard20Regular);
 
 export function useNavViewType() {
-    return useMediaQuery({ query: `(min-width: 1025px)` });
+    return useMediaQuery({ query: `(min-width: 769px)` });
 }
 
 type LayoutProps = {

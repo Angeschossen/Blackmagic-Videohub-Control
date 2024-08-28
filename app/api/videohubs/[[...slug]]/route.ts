@@ -615,37 +615,6 @@ export async function GET(req: NextRequest,
 
     } else {
         switch (slug[0]) {
-            case "view-data": { // get view data
-                const videohub = req.nextUrl.searchParams.get("videohub");
-                let selected: IVideohub | undefined = videohub ? getVideohub(Number(videohub)) : undefined;
-                const hubs: IVideohub[] = retrieveVideohubsServerSide();
-
-                if (selected == undefined) {
-                    if (hubs.length != 0) {
-                        selected = hubs[0];
-                    }
-                }
-
-                const userId: string = await getUserIdFromToken(req)
-                let buttons: any[]
-                let scheduled: IUpcomingScene[]
-                if (selected != undefined) {
-                    buttons = await retrievePushButtonsServerSide(userId, selected.id)
-                    scheduled = retrieveScheduledButtons(selected.id, userId)
-                } else {
-                    buttons = []
-                    scheduled = []
-                }
-
-                return createResponseValid(req, {
-                    user: JSON.parse(JSON.stringify(await retrieveUserServerSide(userId))),
-                    videohubs: JSON.parse(JSON.stringify(hubs)),
-                    videohub: selected ? selected.id : 0,
-                    scenes: JSON.parse(JSON.stringify(buttons)),
-                    upcomingScenes: JSON.parse(JSON.stringify(scheduled))
-                } as ViewData);
-            }
-
             case "activities": {
                 return createResponseValid(req, await getVideohubActivityServerSide())
             }
