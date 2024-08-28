@@ -4,7 +4,7 @@ import { signOut } from "next-auth/react"
 import { IUser } from "@/app/authentification/interfaces"
 
 export const UserHeader = (props: { user: IUser }) => {
-    return <div className="flex justify-between items-center space-x-1 p-2 rounded-md border shadow-md">
+    return <div className="flex justify-between items-center py-2 px-3 rounded-md border shadow-md">
         <p className="font-bold">{`Welcome, ${props.user.username}.`}</p>
         <div className="group relative">
             <div className="inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full">
@@ -15,7 +15,7 @@ export const UserHeader = (props: { user: IUser }) => {
                     <p>{`User: ${props.user.username}`}</p>
                     <p>{`Role: ${props.user.role?.name}`}</p>
                 </div>
-                <ul className="py-1 text-sm text-gray-700" aria-labelledby="avatarButton">
+                <ul className="text-sm text-gray-700">
                     <li>
                         <p className="block px-4 py-2 hover:bg-gray-100" onClick={() => {
                             signOut();
