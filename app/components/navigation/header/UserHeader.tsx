@@ -14,7 +14,7 @@ export const UserHeader = (props: { user: IUser }) => {
                     <p>{`Role: ${props.user.role?.name}`}</p>
                 </div>
                 <ul className="text-sm text-gray-700">
-                    <li>
+                    <li className="block px-4 py-2 hover:bg-gray-100">
                         <SignOut/>
                     </li>
                 </ul>
