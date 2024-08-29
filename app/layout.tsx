@@ -3,7 +3,6 @@ import "./globals.css";
 import { FluentUIProvider } from './providers/fluent-ui-provider';
 import SessionWrapper from "@/app/authentification/SessionWrapper";
 import { Navigation } from "./components/navigation/Navigation";
-import { WebsocketProvider } from "./providers/socket-provider";
 
 export const metadata: Metadata = {
   title: "Videohubs",
@@ -21,9 +20,7 @@ export default function RootLayout({
         <FluentUIProvider>
           <SessionWrapper>
             <Navigation>
-              <WebsocketProvider>
                 {children}
-              </WebsocketProvider>
             </Navigation>
           </SessionWrapper>
         </FluentUIProvider>

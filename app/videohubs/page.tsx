@@ -5,12 +5,13 @@ import { IVideohub } from "../interfaces/videohub";
 import VideohubView from "./VideohubView";
 import { IUser } from "../authentification/interfaces";
 import { getUserServerSide } from "../authentification/server-auth";
+import { WebsocketProvider } from "../providers/socket-provider";
 
 const Page = async ({
     searchParams,
-  }: {
+}: {
     searchParams?: { [key: string]: string | string[] | undefined };
-  }) => {
+}) => {
     const user: IUser = await getUserServerSide();
     const hubs: IVideohub[] = retrieveVideohubsServerSide();
     const { videohub } = searchParams ?? { videohub: "" };
@@ -32,7 +33,9 @@ const Page = async ({
         scheduled = [];
     }
 
-    return <VideohubView videhubs={JSON.parse(JSON.stringify(hubs))} user={JSON.parse(JSON.stringify(user))} videohub={JSON.parse(JSON.stringify(selected))} scenes={JSON.parse(JSON.stringify(scenes))} upcomingScenes={JSON.parse(JSON.stringify(scheduled))} />
+    return <WebsocketProvider>
+        <VideohubView videhubs={JSON.parse(JSON.stringify(hubs))} user={JSON.parse(JSON.stringify(user))} videohub={JSON.parse(JSON.stringify(selected))} scenes={JSON.parse(JSON.stringify(scenes))} upcomingScenes={JSON.parse(JSON.stringify(scheduled))} />
+    </WebsocketProvider>
 }
 
 export default Page;

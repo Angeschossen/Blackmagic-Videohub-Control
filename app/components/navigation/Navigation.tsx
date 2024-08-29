@@ -45,7 +45,7 @@ export const Navigation = (props: LayoutProps) => {
     const canEditUsers = React.useRef(useClientSession(PERMISSION_USER_EDIT))
     const isDesktop = useNavViewType()
     const [isOpen, setIsOpen] = React.useState(isDesktop);
-    const [selected, setSelected] = React.useState(usePathname())
+    console.log(usePathname())
     const router = useRouter();
 
     const renderHamburgerWithToolTip = () => {
@@ -61,7 +61,7 @@ export const Navigation = (props: LayoutProps) => {
             <div className="flex-initial">
                 <NavDrawer
                     className="min-h-full"
-                    selectedValue={selected}
+                    selectedValue={usePathname()}
                     open={isOpen}
                     type={isDesktop ? "inline" : "overlay"}
                     onNavItemSelect={e => {
@@ -70,7 +70,6 @@ export const Navigation = (props: LayoutProps) => {
                         const item: any = e.target
                         const id: string = item?.id
                         router.push(`..${id}`)
-                        setSelected(id);
 
                         if (!isDesktop) {
                             setIsOpen(false)

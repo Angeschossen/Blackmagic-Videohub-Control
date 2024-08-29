@@ -1,5 +1,5 @@
 
-import { VideohubActivityView } from './components/views/VideohubActivityView';
+import { VideohubActivityView } from './components/views/activity/VideohubActivityView';
 import { getServerSession } from 'next-auth';
 import { UserHeader } from './components/navigation/header/UserHeader';
 import { getVideohubActivityServerSide } from './api/videohubs/[[...slug]]/server-videohubs';
