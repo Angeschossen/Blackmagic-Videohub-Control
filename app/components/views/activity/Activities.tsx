@@ -1,17 +1,8 @@
 "use client"
 
 import { IVideohubActivity } from "@/app/interfaces/videohub";
-import { ActivityItem, Icon, Link, mergeStyleSets, Text } from '@fluentui/react';
+import { ActivityItem, Icon, Link, Text } from '@fluentui/react';
 import { useRouter } from "next/navigation";
-
-const classNames = mergeStyleSets({
-    exampleRoot: {
-      marginTop: '20px',
-    },
-    nameText: {
-      fontWeight: '500',
-    },
-  });
 
 export const Activities = (props: { items: IVideohubActivity[] }) => {
     const router = useRouter();

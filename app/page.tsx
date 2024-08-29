@@ -14,18 +14,13 @@ const Home = async () => {
   }
 
   const activities = await getVideohubActivityServerSide();
-  activities.forEach(item => {
-    item.time = new Date(item.time);
-  });
-
-  return (
-    <div>
+  activities.forEach(item => { item.time = new Date(item.time); });
+  return (<div>
       <UserHeader user={user} />
       <div className='mt-10'>
         <VideohubActivityView activityItems={activities} />
       </div>
-    </div>
-  )
+    </div>);
 }
 
 export default Home
