@@ -1,7 +1,5 @@
-"use client"
-
-import { signOut } from "next-auth/react"
 import { IUser } from "@/app/authentification/interfaces"
+import { SignOut } from "./SignOut";
 
 export const UserHeader = (props: { user: IUser }) => {
     return <div className="flex justify-between items-center py-2 px-3 rounded-md border shadow-md">
@@ -17,9 +15,7 @@ export const UserHeader = (props: { user: IUser }) => {
                 </div>
                 <ul className="text-sm text-gray-700">
                     <li>
-                        <p className="block px-4 py-2 hover:bg-gray-100" onClick={() => {
-                            signOut();
-                        }}>Sign out</p>
+                        <SignOut/>
                     </li>
                 </ul>
             </div>

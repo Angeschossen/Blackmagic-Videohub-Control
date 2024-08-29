@@ -1,7 +1,7 @@
 
 import { VideohubActivityView } from './components/views/VideohubActivityView';
 import { getServerSession } from 'next-auth';
-import { UserHeader } from './components/navigation/UserHeader';
+import { UserHeader } from './components/navigation/header/UserHeader';
 import { getVideohubActivityServerSide } from './api/videohubs/[[...slug]]/server-videohubs';
 import { IUser } from './authentification/interfaces';
 import { authOptions } from './api/auth/[...nextauth]/auth-util';
