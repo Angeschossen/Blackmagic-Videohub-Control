@@ -45,7 +45,6 @@ export const Navigation = (props: LayoutProps) => {
     const canEditUsers = React.useRef(useClientSession(PERMISSION_USER_EDIT))
     const isDesktop = useNavViewType()
     const [isOpen, setIsOpen] = React.useState(isDesktop);
-    console.log(usePathname())
     const router = useRouter();
 
     const renderHamburgerWithToolTip = () => {

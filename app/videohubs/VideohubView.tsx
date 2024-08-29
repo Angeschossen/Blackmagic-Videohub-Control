@@ -201,7 +201,10 @@ const VideohubView = (props: {
             <div className='my-5'>
                 <SelectVideohub
                     videohubs={videohubs}
-                    onSelectVideohub={(hub: IVideohub) => onSelectVideohub(hub)} />
+                    onSelectVideohub={(hub: IVideohub) => {
+                        setVideohub(hub)
+                        onSelectVideohub(hub);
+                    }} />
                 <div className='my-10'>
                     <h1 className='text-3xl font-bold'>Routing</h1>
                     <div className='flex justify-end'>
@@ -211,48 +214,48 @@ const VideohubView = (props: {
                         }} />
                     </div>
                 </div>
-                {videohub &&
-                    <OutputsView
-                        selectInput={selectInput}
-                        outputs={outputs}
-                        user={props.user}
-                        videohub={videohub}
-                        onRoutingUpdate={(update: IRoutingUpdateCollection) => {
-                            setRoutingUpdate(update)
-                        }}
-                    />}
-                {videohub &&
-                    <div className='mt-10'>
-                        <div className='flex justify-between'>
-                            <h1 className='text-3xl font-bold my-1'>Scenes</h1>
-                            <ScheduledButtons
-                                videohub={videohub}
-                                scheduledButtons={upcomingScenes}
-                            />
-                        </div>
-                        {videohubs.length > 0 &&
-                            <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
-                                <Button
-                                    icon={<EditRegular />}
-                                    disabled={!canEditPushButtons(canEdit, videohub)}
-                                    onClick={() => {
-                                        if (videohub == null) {
-                                            return;
-                                        }
+                {videohub != undefined &&
+                    <>
+                        <OutputsView
+                            selectInput={selectInput}
+                            outputs={outputs}
+                            user={props.user}
+                            videohub={videohub}
+                            onRoutingUpdate={(update: IRoutingUpdateCollection) => {
+                                setRoutingUpdate(update)
+                            }}
+                        />
+                        <div className='mt-10'>
+                            <div className='flex justify-between'>
+                                <h1 className='text-3xl font-bold my-1'>Scenes</h1>
+                                <ScheduledButtons
+                                    videohub={videohub}
+                                    scheduledButtons={upcomingScenes}
+                                />
+                            </div>
+                            {videohubs.length > 0 &&
+                                <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
+                                    <Button
+                                        icon={<EditRegular />}
+                                        disabled={!canEditPushButtons(canEdit, videohub)}
+                                        onClick={() => {
+                                            if (videohub == null) {
+                                                return;
+                                            }
 
-                                        router.push(`../videohubs/scenes?videohub=${videohub.id}`);
-                                    }}>
-                                    Edit
-                                </Button>
-                            </Tooltip>}
-                        <div className='my-5'>
-                            <PushButtonsList
-                                pushbuttons={scenes.filter(button => button.display)}
-                                videohub={videohub}
-                            />
+                                            router.push(`../videohubs/scenes?videohub=${videohub.id}`);
+                                        }}>
+                                        Edit
+                                    </Button>
+                                </Tooltip>}
+                            <div className='my-5'>
+                                <PushButtonsList
+                                    pushbuttons={scenes.filter(button => button.display)}
+                                    videohub={videohub}
+                                />
+                            </div>
                         </div>
-                    </div>
-                }
+                    </>}
             </div>
             <Toaster position={isDekstop ? "bottom-end" : "bottom"} limit={5} toasterId={toasterId} />
         </VideohubPage>

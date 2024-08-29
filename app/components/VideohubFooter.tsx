@@ -17,7 +17,6 @@ function getStatusComponent(videohub?: IVideohub) {
         colorBg = "bg-grey-50"
         colorBorder = "border-grey-600"
         icon = <IoIosInformationCircle/>
-
     } else {
         if (videohub.connected) {
             title = "Connected"
@@ -35,10 +34,10 @@ function getStatusComponent(videohub?: IVideohub) {
         }
     }
 
-    return <div className={`flex space-x-1 items-center p-2 rounded-md border ${colorBg} ${colorBorder}`}>
-        {icon}
-        <p className="break-all"><span className="font-bold">{title}: </span>{desc}</p>
-    </div>
+return <div className={`flex space-x-1 items-center p-2 rounded-md border ${colorBg} ${colorBorder}`}>
+    {icon}
+    <p className="break-all"><span className="font-bold">{title}: </span>{desc}</p>
+</div>
 
 }
 

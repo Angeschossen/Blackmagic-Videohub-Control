@@ -7,6 +7,7 @@ import { IVideohub } from "@/app/interfaces/videohub";
 import { getRandomKey } from "@/app/util/commonutils";
 import { PERMISSION_VIDEOHUB_EDIT } from "@/app/authentification/permissions";
 import { useClientSession } from "@/app/authentification/client-auth";
+import { getVideohubFromArray } from "@/app/videohubs/VideohubView";
 
 
 interface InputProps {
@@ -26,6 +27,16 @@ export const SelectVideohub = (props: InputProps) => {
         name,
         checkedItems
     }) => {
+        if (checkedItems.length != 1) {
+            throw new Error("Expected one selected item");
+        }
+
+        const id = Number(checkedItems[0]);
+        const videohub = getVideohubFromArray(props.videohubs, id);
+        if (videohub == undefined) {
+            throw new Error("Invalid dropdown items");
+        }
+
         setCheckedValues(s => {
             return s ? {
                 ...s,
@@ -34,6 +45,8 @@ export const SelectVideohub = (props: InputProps) => {
                 [name]: checkedItems
             };
         });
+
+        props.onSelectVideohub(videohub);
     };
 
     return (
