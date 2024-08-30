@@ -170,10 +170,10 @@ const VideohubView = (props: {
             return;
         }
 
-        const channel: string = `videohubUpdate`;
         const onVideohubUpdate = (e: VideohubUpdate) => {
             socketHandlerRef.current.onVideohubUpdate(e);
         }
+        const channel: string = `videohubUpdate`;
         socket.on(channel, onVideohubUpdate);
 
         const onUpcomingScenes = (arr: IUpcomingScene[]) => {
@@ -222,7 +222,7 @@ const VideohubView = (props: {
                             user={props.user}
                             videohub={videohub}
                             onRoutingUpdate={(update: IRoutingUpdateCollection) => {
-                                setRoutingUpdate(update)
+                                setRoutingUpdate(update);
                             }}
                         />
                         <div className='mt-10'>
@@ -233,21 +233,20 @@ const VideohubView = (props: {
                                     scheduledButtons={upcomingScenes}
                                 />
                             </div>
-                            {videohubs.length > 0 &&
-                                <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
-                                    <Button
-                                        icon={<EditRegular />}
-                                        disabled={!canEditPushButtons(canEdit, videohub)}
-                                        onClick={() => {
-                                            if (videohub == null) {
-                                                return;
-                                            }
+                            <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
+                                <Button
+                                    icon={<EditRegular />}
+                                    disabled={!canEditPushButtons(canEdit, videohub)}
+                                    onClick={() => {
+                                        if (videohub == null) {
+                                            return;
+                                        }
 
-                                            router.push(`../videohubs/scenes?videohub=${videohub.id}`);
-                                        }}>
-                                        Edit
-                                    </Button>
-                                </Tooltip>}
+                                        router.push(`../videohubs/scenes?videohub=${videohub.id}`);
+                                    }}>
+                                    Edit
+                                </Button>
+                            </Tooltip>
                             <div className='my-5'>
                                 <PushButtonsList
                                     pushbuttons={scenes.filter(button => button.display)}

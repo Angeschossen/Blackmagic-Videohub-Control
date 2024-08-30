@@ -55,12 +55,13 @@ export const Navigation = (props: LayoutProps) => {
         );
     };
 
+    const path = "/"+usePathname()?.substring(1).split("/")[0];
     return (
         <div className="flex min-h-screen">
             <div className="flex-initial">
                 <NavDrawer
                     className="min-h-full"
-                    selectedValue={usePathname()}
+                    selectedValue={path}
                     open={isOpen}
                     type={isDesktop ? "inline" : "overlay"}
                     onNavItemSelect={e => {

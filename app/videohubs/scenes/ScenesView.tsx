@@ -50,11 +50,11 @@ export const PushButtonListNew = (props: { videohub?: IVideohub, scenes: IScene[
             }
         }
 
-        setScenes(arr)
+        setScenes(arr);
     }
 
     if (props.videohub == undefined) {
-        return <p>No videohub selected.</p>;
+        return <p className="flex flex-col justify-center h-screen">No videohub selected.</p>;
     }
 
     return (

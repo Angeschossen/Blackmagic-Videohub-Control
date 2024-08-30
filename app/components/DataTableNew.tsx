@@ -1,9 +1,5 @@
 import { Table, TableBody, TableCell, TableCellLayout, TableHeader, TableHeaderCell, TableRow } from '@fluentui/react-components';
 
-export interface TableInput {
-    items: DataTableItem[] | undefined,
-    columns: DataTableColumn[],
-}
 
 export interface DataTableColumn {
     key?: string,
@@ -42,15 +38,16 @@ export function buildDataTableItems(items: DataItem[]): DataTableItem[] {
 }
 
 
-export const DataTable = (props: TableInput) => {
+export const DataTable = (props: {
+    items: DataTableItem[] | undefined,
+    columns: DataTableColumn[],
+}) => {
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    {props.columns.map(column => <TableHeaderCell key={column.key || column.label.toLowerCase()}>{column.label}</TableHeaderCell>)}
-                </TableRow>
-            </TableHeader>
-            <TableBody>
+        <Table><TableHeader>
+            <TableRow>{props.columns.map(column => <TableHeaderCell
+                    key={column.key || column.label.toLowerCase()}>{column.label}
+                </TableHeaderCell>)}</TableRow>
+        </TableHeader><TableBody>
                 {props.items?.map(item =>
                     <TableRow key={item.key}>
                         {item.cells.map(cell =>
@@ -58,9 +55,7 @@ export const DataTable = (props: TableInput) => {
                                 {cell}
                             </TableCell>
                         )}
-                    </TableRow>)}
-            </TableBody>
-        </Table>
+                    </TableRow>)}</TableBody></Table>
     );
 }
 
