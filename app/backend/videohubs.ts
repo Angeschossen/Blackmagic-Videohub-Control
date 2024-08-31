@@ -597,6 +597,10 @@ export class Videohub {
         return output
     }
 
+    hasOutput(id: number): boolean {
+        return this.outputsObjs[id] != undefined;
+    }
+
     getOutput(id: number): Output {
         const output = this.outputsObjs[id]
         if (output == undefined) {
@@ -918,7 +922,7 @@ export async function setupVideohubs() {
         }
 
         videohubs.push(new Videohub(e))
-    })
+    });
 
     console.log("Connecting to videohubs.");
     for (const hub of getClients()) {
