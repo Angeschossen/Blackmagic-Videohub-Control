@@ -9,42 +9,13 @@ import { TriggerType } from "@prisma/client";
 import { convertDateToLocal } from "@/app/util/dateutil";
 import { getRequestHeader } from "@/app/util/fetchutils";
 import { IScene, ISceneTrigger } from "@/app/interfaces/scenes";
+import { useTranslations } from "next-intl";
 
 interface Day {
     label: string,
     value: number
 }
 
-const days: Day[] = [
-    {
-        label: 'Sunday',
-        value: 0,
-    },
-    {
-        label: 'Monday',
-        value: 1,
-    },
-    {
-        label: 'Tuesday',
-        value: 2,
-    },
-    {
-        label: 'Wednesday',
-        value: 3,
-    },
-    {
-        label: 'Thursday',
-        value: 4,
-    },
-    {
-        label: 'Friday',
-        value: 5,
-    },
-    {
-        label: 'Saturday',
-        value: 6,
-    }
-]
 
 /**
  * Assure format hh:mm not h:mm etc.
@@ -68,10 +39,43 @@ const Trigger = (props: {
 }) => {
     const [time, setTime] = React.useState<InputState>({ value: correctTime(props.trigger.time.getHours()) + ":" + correctTime(props.trigger.time.getMinutes()) })
     const [type, setType] = React.useState<TriggerType>(props.trigger.type)
+    const t = useTranslations('SceneScheduleModal');
 
     const inputDaysId = useId('input_days')
     const inputTypeId = useId('input_type')
     const inputTimeId = useId('input_time')
+
+    const days: Day[] = [
+        {
+            label: t("fields.days.values.sunday"),
+            value: 0,
+        },
+        {
+            label: t("fields.days.values.monday"),
+            value: 1,
+        },
+        {
+            label: t("fields.days.values.tuesday"),
+            value: 2,
+        },
+        {
+            label: t("fields.days.values.wednesday"),
+            value: 3,
+        },
+        {
+            label: t("fields.days.values.thursday"),
+            value: 4,
+        },
+        {
+            label: t("fields.days.values.friday"),
+            value: 5,
+        },
+        {
+            label: t("fields.days.values.saturday"),
+            value: 6,
+        }
+    ];
+
 
     const onChangeTime: InputProps['onChange'] = (_ev, data) => {
         setTime({ value: data.value })
@@ -98,13 +102,12 @@ const Trigger = (props: {
                     onClick={() => props.onDelete()}
                 />
             </div>
-            <Label htmlFor={inputTypeId}>Type</Label>
+            <Label htmlFor={inputTypeId}>{t("fields.type.title")}</Label>
             <Dropdown
                 style={{ minWidth: 'auto' }}
                 id={inputTypeId}
                 defaultSelectedOptions={[props.trigger.type.toString().substring(0, 1).toUpperCase() + props.trigger.type.toString().substring(1).toLocaleLowerCase()]}
                 defaultValue={type.toString().substring(0, 1).toUpperCase() + type.toString().substring(1).toLocaleLowerCase()}
-                placeholder={"Select type"}
                 onOptionSelect={(_event: any, data: any) => {
                     const val = data.optionValue
                     let t: TriggerType
@@ -119,14 +122,14 @@ const Trigger = (props: {
                     props.onSelectType(t)
                     setType(t)
                 }}>
-                <Option key={`${inputTypeId}_time`}>Time</Option>
-                <Option key={`${inputTypeId}_sunrise`}>Sunrise</Option>
-                <Option key={`${inputTypeId}_sunset`}>Sunset</Option>
+                <Option key={`${inputTypeId}_time`}>{t("fields.type.values.time")}</Option>
+                <Option key={`${inputTypeId}_sunrise`}>{t("fields.type.values.sunrise")}</Option>
+                <Option key={`${inputTypeId}_sunset`}>{t("fields.type.values.sunset")}</Option>
             </Dropdown>
 
             {props.trigger.type === "TIME" ?
                 <>
-                    <Label htmlFor={inputTimeId}>Time</Label>
+                    <Label htmlFor={inputTimeId}>{t("fields.time")}</Label>
                     <Field id={inputTimeId}>
                         <Input
                             type="time"
@@ -135,14 +138,14 @@ const Trigger = (props: {
                     </Field>
                 </>
                 : undefined}
-            <Label htmlFor={inputDaysId}>Days</Label>
+            <Label htmlFor={inputDaysId}>{t("fields.days.title")}</Label>
             <Dropdown
                 style={{ minWidth: 'auto' }}
                 multiselect
                 id={inputDaysId}
                 defaultSelectedOptions={props.trigger.days.map((day: number) => days[day].label)}
                 defaultValue={days.filter(d => props.trigger.days.indexOf(d.value) != -1).map(d => d.label).join(', ')}
-                placeholder="Select days"
+                placeholder={t("fields.days.placeholder")}
                 onOptionSelect={(_event: any, data: any) => {
                     const val = getDayFromValue(data.optionValue)?.value
                     if (val != undefined) {
@@ -186,7 +189,7 @@ function getDefaultDate() {
 }
 
 export const PushButtonScheduleModal = (props: { button: IScene, trigger: JSX.Element, }) => {
-
+    const t = useTranslations('SceneScheduleModal');
     const [triggers, setTriggers] = React.useState<ISceneTrigger[]>(props.button.triggers.length == 0 ? [{ id: "null", pushbutton_id: props.button.id, type: "TIME", time: getDefaultDate(), days: [] }] : collectTriggers(props.button))
 
     function createTriggerComponent(trigger: ISceneTrigger, index: number) {
@@ -232,9 +235,9 @@ export const PushButtonScheduleModal = (props: { button: IScene, trigger: JSX.El
     return (
         <InputModal
             {...props}
-            title={"Triggers"}
+            title={t("title")}
             trigger={props.trigger}
-            description="You can add multiple triggers for each scene. However, they can only be applied when the videohub is reachable."
+            description={t("description")}
             handleSubmit={async function (): Promise<string | undefined> {
                 const res = await fetch(`/api/videohubs/${props.button.videohub_id}/scenes/${props.button.id}/triggers`, getRequestHeader("PUT", { actions: props.button.actions, triggers: triggers }))
                 if (res.status != 200) {
@@ -251,7 +254,7 @@ export const PushButtonScheduleModal = (props: { button: IScene, trigger: JSX.El
                     arr.push({ id: "null", pushbutton_id: props.button.id, type: "TIME", time: getDefaultDate(), days: [] })
                     setTriggers(arr)
                 }}>
-                Add Trigger
+                {t("add")}
             </Button>
         </InputModal>
     )

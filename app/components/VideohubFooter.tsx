@@ -2,45 +2,41 @@
 import * as React from "react";
 import { IVideohub } from "../interfaces/videohub";
 import { IoIosCheckmarkCircle, IoIosInformationCircle, IoIosWarning } from "react-icons/io";
+import { useTranslations } from "next-intl";
 
-interface InputProps {
+export const VideohubFooter = (p: {
     videohub?: IVideohub,
-}
+}) => {
+    const t = useTranslations('VideohubHeader');
 
-function getStatusComponent(videohub?: IVideohub) {
     let title, desc;
     let colorBg: string, colorBorder: string;
     let icon;
-    if (videohub == undefined) {
-        title = "None setup"
-        desc = "No videohub setup yet."
+    if (p.videohub == undefined) {
+        title = t("status.none.title")
+        desc = t("status.none.description")
         colorBg = "bg-grey-50"
         colorBorder = "border-grey-600"
-        icon = <IoIosInformationCircle/>
+        icon = <IoIosInformationCircle />
     } else {
-        if (videohub.connected) {
-            title = "Connected"
-            desc = "The videohub can be controlled.";
+        if (p.videohub.connected) {
+            title = t("status.connected.title")
+            desc = t("status.connected.description");
             colorBg = "bg-green-50"
             colorBorder = "border-green-600"
             icon = <IoIosCheckmarkCircle color="green" />
 
         } else {
-            title = "Disconnected"
-            desc = "The videohub is offline."
+            title = t("status.disconnected.title")
+            desc = t("status.disconnected.description")
             colorBg = "bg-red-50"
             colorBorder = "border-red-600"
-            icon = <IoIosWarning/>
+            icon = <IoIosWarning />
         }
     }
 
-return <div className={`flex space-x-1 items-center p-2 rounded-md border ${colorBg} ${colorBorder}`}>
-    {icon}
-    <p className="break-all"><span className="font-bold">{title}: </span>{desc}</p>
-</div>
-
-}
-
-export const VideohubFooter = (p: InputProps) => {
-    return getStatusComponent(p.videohub)
+    return <div className={`flex space-x-1 items-center p-2 rounded-md border ${colorBg} ${colorBorder}`}>
+        {icon}
+        <p className="break-all"><span className="font-bold">{title}: </span>{desc}</p>
+    </div>
 }

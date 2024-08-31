@@ -1,14 +1,16 @@
 import { IVideohubActivity } from '@/app/interfaces/videohub';
 import * as React from 'react';
 import { Activities } from './Activities';
+import { useTranslations } from 'next-intl';
 
 
 export const VideohubActivityView = (p: { activityItems: IVideohubActivity[] | null }) => {
+  const t = useTranslations('VideohubActivities');
+
   return (
     <div>
-      <h1 className='text-3xl font-bold'>Recent Activity of Videohubs</h1>
       {p.activityItems == null || p.activityItems.length == 0 ?
-        <p>No activities yet.</p> :
+        <p>{t("none")}</p> :
         <Activities items={p.activityItems} />}
     </div>
   );

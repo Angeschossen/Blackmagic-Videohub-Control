@@ -1,0 +1,239 @@
+{
+  "Navigation": {
+    "navigation": "Navigation",
+    "items": {
+      "home": "Home",
+      "videohubs": "Videohubs",
+      "administration": "Administration"
+    }
+  },
+  "Header": {
+    "welcome": "Welcome {user}!",
+    "user": {
+      "name": "User: {user}",
+      "role": "Role: {role}",
+      "signOut": "Sign out"
+    }
+  },
+  "Home": {
+    "title": "Recent Activity of Videohubs"
+  },
+  "VideohubActivities": {
+    "none": "No acitivties yet.",
+    "connection": {
+      "established": "Connection established.",
+      "lost": "Connection lost."
+    },
+    "rescheduled": {
+      "failed": "Rescheduled scene failed.",
+      "success": "Rescheduled scene was applied successfully."
+    },
+    "scheduled": {
+      "failed": "Scheduled scene failed.",
+      "success": "Scheduled scene was applied successfully."
+    }
+  },
+  "Videohubs": {
+    "routing": {
+      "title": "Routing",
+      "setInput": "Set input"
+    },
+    "scenes": {
+      "title": "Scenes",
+      "edit": {
+        "button": "Edit",
+        "tooltip": "Here you can create scenes to execute multiple routing updates at once."
+      }
+    },
+    "events": {
+      "connection": {
+        "established": "Connection to videohub established.",
+        "lost": "Connection to videohub lost."
+      },
+      "routingUpdate": "Routing update received: {input} to {output}{more, plural, =0 {.} =1 { and one more change.} other { and # more changes.}"
+    }
+  },
+  "RoutingTable": {
+    "none": "None",
+    "unknown": "Unknown",
+    "columns": {
+      "output": "Output",
+      "input": "Input",
+      "defaultInput": "Default Input"
+    }
+  },
+  "ScheduledScenes": {
+    "cancelled": "Cancelled",
+    "scheduled": "Scheduled",
+    "description": "{button} at {time}"
+  },
+  "VideohubHeader": {
+    "status": {
+      "none": {
+        "title": "None setup",
+        "description": "You didn't setup a videohub yet."
+      },
+      "connected": {
+        "title": "Connected",
+        "description": "The videohub can be controlled."
+      },
+      "disconnected": {
+        "title": "Disconnected",
+        "description": "The videohub is offline."
+      }
+    }
+  },
+  "Scenes": {
+    "title": "Scenes",
+    "none": "No videohub selected.",
+    "add": "Add"
+  },
+  "ScenesTable": {
+    "defaultDescription": "{amount, plural, =0 {No changes} =1 {One change} other {# changes}}",
+    "actions": {
+      "edit": "Edit",
+      "schedule": "Schedule"
+    },
+    "columns": {
+      "name": "Name",
+      "description": "Description",
+      "actions": "Actions"
+    }
+  },
+  "SceneScheduleModal": {
+    "title": "Schedule Scene",
+    "description": "You can add multiple triggers for each scene. However, they can only be applied when the videohub is reachable.",
+    "add": "Add trigger",
+    "fields": {
+      "type": {
+        "title": "Type",
+        "values": {
+          "time": "Time",
+          "sunrise": "Sunrise",
+          "sunset": "Sunset"
+        }
+      },
+      "time": "Time",
+      "days": {
+        "title": "Days",
+        "placeholder": "Select days",
+        "values": {
+          "sunday": "Sunday",
+          "monday": "Monday",
+          "tuesday": "Tuesday",
+          "wednesday": "Wednesday",
+          "thursday": "Thursday",
+          "friday": "Friday",
+          "saturday": "Saturday"
+        }
+      }
+    }
+  },
+  "UsersTable": {
+    "columns": {
+      "role": "Role",
+      "actions": "Actions"
+    },
+    "role": "Select role",
+    "actions": {
+      "delete": "Delete"
+    }
+  },
+  "Administration": {
+    "roles": {
+      "title": "Roles",
+      "add": "Add role"
+    },
+    "users": {
+      "title": "Users",
+      "role": "Select role"
+    }
+  },
+  "RolesTable": {
+    "actions": {
+      "outputs": {
+        "name": "Outputs",
+        "title": "Edit Outputs",
+        "description": "Outputs are given for each specific videohub."
+      },
+      "permissions": {
+        "name": "Permissions",
+        "title": "Edit Permissions",
+        "description": "Permissions are global and active for each videohub."
+      },
+      "delete": "Delete"
+    },
+    "columns": {
+      "role": "Role",
+      "actions": "Actions"
+    }
+  },
+  "RoleEditModal": {
+    "title": {
+      "create": "Create Role",
+      "edit": "Edit Role"
+    },
+    "fields": {
+      "name": "Name"
+    }
+  },
+  "SceneEditModal": {
+    "title": {
+      "create": "Create Scene",
+      "edit": "Edit Scene"
+    },
+    "sections": {
+      "general": {
+        "title": "General",
+        "fields": {
+          "name": "Name",
+          "description": "Description"
+        }
+      },
+      "display": {
+        "title": "Display",
+        "fields": {
+          "show": "Show",
+          "sorting": "Sorting",
+          "color": "Color"
+        }
+      },
+      "routings": {
+        "title": "Routings",
+        "add": "Add",
+        "fields": {
+          "output": {
+            "title": "Output",
+            "placeholder": "Select output"
+          },
+          "input": {
+            "title": "Input",
+            "placeholder": "Select input"
+          }
+        }
+      }
+    }
+  },
+  "VideohubSelection": {
+    "button": "Select videohub",
+    "add": "Add"
+  },
+  "EditVideohubModal": {
+    "title": "Add Videohub",
+    "fields": {
+      "ip": "IP-Address",
+      "name": {
+        "title": "Name",
+        "placeholder": "Get from device"
+      },
+      "latitude": "Latitude",
+      "longitude": "Longitude"
+    }
+  },
+  "InputModal": {
+    "buttons": {
+      "close": "Close",
+      "submit": "Submit"
+    }
+  }
+}

@@ -26,6 +26,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMediaQuery } from "react-responsive";
 import { useClientSession } from "@/app/authentification/client-auth";
 import { PERMISSION_ROLE_EDIT, PERMISSION_USER_EDIT } from "@/app/authentification/permissions";
+import { useTranslations } from "next-intl";
 
 
 const Videohubs = bundleIcon(VideoSwitch20Filled, VideoSwitch20Regular);
@@ -46,22 +47,22 @@ export const Navigation = (props: LayoutProps) => {
     const isDesktop = useNavViewType()
     const [isOpen, setIsOpen] = React.useState(isDesktop);
     const router = useRouter();
+    const t = useTranslations('Navigation');
 
     const renderHamburgerWithToolTip = () => {
         return (
-            <Tooltip content="Navigation" relationship="label">
+            <Tooltip content={t('navigation')} relationship="label">
                 <Hamburger onClick={() => setIsOpen(!isOpen)} />
             </Tooltip>
         );
     };
 
-    const path = "/"+usePathname()?.substring(1).split("/")[0];
     return (
         <div className="flex min-h-screen">
             <div className="flex-initial">
                 <NavDrawer
                     className="min-h-full"
-                    selectedValue={path}
+                    selectedValue={usePathname()?.substring(1).split("/")[0]}
                     open={isOpen}
                     type={isDesktop ? "inline" : "overlay"}
                     onNavItemSelect={e => {
@@ -78,17 +79,17 @@ export const Navigation = (props: LayoutProps) => {
                 >
                     <NavDrawerHeader>{renderHamburgerWithToolTip()}</NavDrawerHeader>
                     <NavDrawerBody>
-                        <NavItem icon={<Home />} value="/" id="/">
-                            Home
+                        <NavItem icon={<Home />} value="" id="/">
+                            {t('items.home')}
                         </NavItem>
-                        <NavItem icon={<Videohubs />} value="/videohubs" id="/videohubs">
-                            Videohubs
+                        <NavItem icon={<Videohubs />} value="videohubs" id="/videohubs">
+                            {t('items.videohubs')}
                         </NavItem>
                         {canEditRoles.current && canEditUsers.current &&
                             <>
                                 < NavDivider />
-                                <NavItem icon={<Administration />} value="/admin" id="/admin">
-                                    Administration
+                                <NavItem icon={<Administration />} value="admin" id="/admin">
+                                    {t('items.administration')}
                                 </NavItem>
                             </>
                         }

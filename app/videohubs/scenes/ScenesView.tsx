@@ -9,10 +9,12 @@ import { IUser } from "../../authentification/interfaces";
 import { VideohubPage } from "../../components/videohub/VideohubPage";
 import { EditPushButtonModal } from "../../components/modals/pushbuttons/EditPushButtonModalNew";
 import { PushButtonsTableView } from "../../components/views/pushbuttons/PushButtonsTableView";
+import { useTranslations } from "next-intl";
 
 
 export const PushButtonListNew = (props: { videohub?: IVideohub, scenes: IScene[], user: IUser }) => {
     const [scenes, setScenes] = React.useState<IScene[]>(props.scenes);
+    const t = useTranslations('Scenes');
 
     const onButtonUpdate = (button: IScene, action: "create" | "update" | "delete") => {
         const arr: IScene[] = [...scenes]
@@ -54,13 +56,12 @@ export const PushButtonListNew = (props: { videohub?: IVideohub, scenes: IScene[
     }
 
     if (props.videohub == undefined) {
-        return <p className="flex flex-col justify-center h-screen">No videohub selected.</p>;
+        return <p className="flex flex-col justify-center h-screen">{t("none")}</p>;
     }
 
     return (
         <VideohubPage videohub={props.videohub}>
             <div className="my-5">
-                <h1 className='text-3xl font-bold'>Scenes</h1>
                 <div className='my-1'>
                     <EditPushButtonModal
                         user={props.user}
@@ -68,7 +69,7 @@ export const PushButtonListNew = (props: { videohub?: IVideohub, scenes: IScene[
                         buttons={scenes}
                         trigger={
                             <Button icon={<AddRegular />}>
-                                Add
+                                {t("add")}
                             </Button>}
                         onButtonUpdate={onButtonUpdate} />
                     <div className="mt-10">

@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogOpenChangeData, DialogOpenChangeEvent, DialogSurface, DialogTitle, DialogTrigger, makeStyles } from "@fluentui/react-components";
 import React from "react";
 import { AlertMessage } from "../common/AlertMessage";
+import { useTranslations } from "next-intl";
 
 
 interface InputProps extends InputModalProps {
@@ -28,6 +29,7 @@ const useStyles = makeStyles({
 export const InputModal = (props: InputProps) => {
     const [error, setError] = React.useState<string | undefined>();
     const [open, setOpen] = React.useState<boolean>(props.open || false)
+    const t = useTranslations('InputModal');
 
     const styles = useStyles();
     const handleSubmit = (ev: React.FormEvent) => {
@@ -79,12 +81,10 @@ export const InputModal = (props: InputProps) => {
                         </DialogContent>
                         <DialogActions>
                             <DialogTrigger>
-                                <Button appearance="secondary">Close</Button>
+                                <Button appearance="secondary">{t("buttons.close")}</Button>
                             </DialogTrigger>
                             {props.additionalTrigger}
-                            <Button type="submit" appearance="primary">
-                                Submit
-                            </Button>
+                            <Button type="submit" appearance="primary">{t("buttons.submit")}</Button>
                         </DialogActions>
                     </DialogBody>
                 </form>

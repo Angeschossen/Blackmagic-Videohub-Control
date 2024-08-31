@@ -80,9 +80,9 @@ export class Button {
 
                     if (!result.result) {
                         this.videohub.addFailedButton(this);
-                        await this.videohub.logActivity(`Scheduled scene failed: ${label}`, ICON_ERROR);
+                        await this.videohub.logActivity("scheduled.failed", ICON_ERROR);
                     } else {
-                        await this.videohub.logActivity(`Scheduled scene applied successfully: ${label}`, ICON_SUCCESS);
+                        await this.videohub.logActivity("scheduled.success", ICON_SUCCESS);
                     }
 
                     await this.goToNext();

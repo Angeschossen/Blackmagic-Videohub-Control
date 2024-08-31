@@ -4,6 +4,7 @@ import { InputModal } from "./InputModalNew";
 import { useInputStyles } from "@/app/util/styles";
 import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IVideohub } from "@/app/interfaces/videohub";
+import { useTranslations } from "next-intl";
 
 interface Props {
     videohubs: IVideohub[],
@@ -12,7 +13,6 @@ interface Props {
     open: boolean,
     trigger?: JSX.Element,
     onOpenChange?: (open: boolean) => void,
-    title: string,
 }
 
 export const EditVideohubModal = (props: Props) => {
@@ -20,7 +20,8 @@ export const EditVideohubModal = (props: Props) => {
     const inputIdName = useId('name');
     const inputLatitude = useId('latitude');
     const inputLongitude = useId('longitude');
-
+    
+    const t = useTranslations('EditVideohubModal');
     const [ip, setIP] = React.useState(props.edit?.ip || "");
     const [name, setName] = React.useState(props.edit?.name || "");
     const [latitude, setLatitude] = React.useState(props.edit?.latitude || 0);
@@ -94,15 +95,15 @@ export const EditVideohubModal = (props: Props) => {
                     }
                 })
             }}
-            title={props.title}>
+            title={t("title")}>
             <div className={styles.root}>
-                <Label htmlFor={inputIdIP}>IP-Address</Label>
+                <Label htmlFor={inputIdIP}>{t("fields.ip")}</Label>
                 <Input required value={ip} onChange={onChangeIP} id={inputIdIP} />
-                <Label htmlFor={inputIdName}>Name</Label>
-                <Input value={name} placeholder={"Get from device"} onChange={onChangeName} id={inputIdName} />
-                <Label htmlFor={inputLatitude}>Latitude</Label>
+                <Label htmlFor={inputIdName}>{t("fields.name.title")}</Label>
+                <Input value={name} placeholder={t("fields.name.placeholder")} onChange={onChangeName} id={inputIdName} />
+                <Label htmlFor={inputLatitude}>{t("fields.latitude")}</Label>
                 <Input required type="number" onChange={onChangeLatitude} id={inputLatitude}></Input>
-                <Label htmlFor={inputLongitude}>Longitude</Label>
+                <Label htmlFor={inputLongitude}>{t("fields.longitude")}</Label>
                 <Input required type="number" onChange={onChangeLongitude} id={inputLongitude}></Input>
             </div>
         </InputModal>

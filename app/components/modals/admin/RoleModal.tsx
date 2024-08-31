@@ -4,6 +4,7 @@ import { InputModal } from "../InputModalNew";
 import { getRequestHeader } from "@/app/util/fetchutils";
 import { useInputStyles } from "@/app/util/styles";
 import { IRole } from "@/app/authentification/interfaces";
+import { useTranslations } from "next-intl";
 
 interface Props {
     role?: IRole,
@@ -16,7 +17,7 @@ interface Props {
 export const RoleModal = (props: Props) => {
     const styles = useInputStyles();
     const inputIdIP = useId('ip');
-
+    const t = useTranslations('RoleEditModal');
     const [name, setName] = React.useState<string>("");
 
     const onChangeName: InputProps['onChange'] = (_ev, data) => {
@@ -28,7 +29,7 @@ export const RoleModal = (props: Props) => {
     return (
         <InputModal
             trigger={props.trigger}
-            title={props.role == undefined ? "Create Role" : "Edit Role"}
+            title={props.role == undefined ? t("title.create") : t("title.edit")}
             handleSubmit={function (): Promise<string | undefined> {
                 if (name == undefined) {
                     return Promise.resolve("You must provide a name.")
@@ -73,7 +74,7 @@ export const RoleModal = (props: Props) => {
                 })
             }}>
             <div className={styles.root}>
-                <Label htmlFor={inputIdIP}>Name</Label>
+                <Label htmlFor={inputIdIP}>{t("fields.name")}</Label>
                 <Input value={name} onChange={onChangeName} id={inputIdIP} />
             </div>
         </InputModal >

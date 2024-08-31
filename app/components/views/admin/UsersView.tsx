@@ -5,6 +5,7 @@ import { DataTable, DataTableColumn, DataTableItem } from "../../DataTableNew";
 import { getRoleById, getRoleByName } from "./RolesView";
 import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IRole, IUser } from "@/app/authentification/interfaces";
+import { useTranslations } from "next-intl";
 
 interface Props {
     roles: IRole[],
@@ -25,6 +26,7 @@ const columns: DataTableColumn[] = [
 ]
 
 export const UsersView = (props: Props) => {
+    const t = useTranslations('UsersTable');
 
     function buildItems(users: IUser[]): DataTableItem[] {
         const items: DataTableItem[] = [];
@@ -36,7 +38,7 @@ export const UsersView = (props: Props) => {
             const cells: JSX.Element[] = [
                 <TableCellLayout key={`${key}_username`}>{user.username}</TableCellLayout>,
                 <TableCellLayout key={`${key}_role`}>
-                    <Dropdown style={{ minWidth: 'auto' }} disabled={role != null && !role.editable} defaultSelectedOptions={selected ? [selected] : []} placeholder={selected || "Select role"}
+                    <Dropdown style={{ minWidth: 'auto' }} disabled={role != null && !role.editable} defaultSelectedOptions={selected ? [selected] : []} placeholder={selected || t("role")}
                         onOptionSelect={async (_event: any, data: any) => {
                             const name: string = data.optionValue;
                             const found: IRole | undefined = getRoleByName(props.roles, name)
@@ -62,7 +64,7 @@ export const UsersView = (props: Props) => {
                                 }
                             });
                         }}>
-                        Delete
+                        {t("actions.delete")}
                     </Button>
                 </TableCellLayout>,
             ]

@@ -239,13 +239,13 @@ export class Videohub {
         this.info("Retrying scheduled buttons.")
         for (const failed of this.failedButtonsCache.getValues()) {
             await this.executeButton(failed.id).then(async result => {
-                const label = await getLabelOfButton(failed.id)
+                //const label = await getLabelOfButton(failed.id)
 
                 if (result != undefined) {
-                    await this.logActivity(`Rescheduled scene failed: ${label}`, ICON_ERROR)
+                    await this.logActivity("rescheduled.failed", ICON_ERROR)
                     // dont remove. They will be removed when ttl expires
                 } else {
-                    await this.logActivity(`Rescheduled scene applied successfully: ${label}`, ICON_SUCCESS)
+                    await this.logActivity("rescheduled.success", ICON_SUCCESS)
                     this.failedButtonsCache.delete(failed.id) // only remove if success
                 }
             });
@@ -486,7 +486,7 @@ export class Videohub {
                 await this.sendDefaultRouting(), 10000);
 
             if (!isInitial) {
-                await this.logActivity("Connection established.", ICON_CONNECTION_SUCCESS);
+                await this.logActivity("connection.established", ICON_CONNECTION_SUCCESS);
             }
 
             await this.retryFailedButtons();
@@ -548,7 +548,7 @@ export class Videohub {
 
         if (wasConnected) {
             this.emitUpdate("connection_lost", {});
-            await this.logActivity("Connection lost.", ICON_ERROR)
+            await this.logActivity("connection.lost", ICON_ERROR)
         }
 
         this.connectionAttempt++;

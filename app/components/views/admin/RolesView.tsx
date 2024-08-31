@@ -9,6 +9,7 @@ import { stackTokens } from "@/app/util/styles";
 import { getRequestHeader } from "@/app/util/fetchutils";
 import { IRole } from "@/app/authentification/interfaces";
 import { IVideohub } from "@/app/interfaces/videohub";
+import { useTranslations } from "next-intl";
 
 interface Props {
     videohub?: IVideohub
@@ -17,14 +18,6 @@ interface Props {
     onRoleDeleted: (role: IRole) => void
 }
 
-const columns: DataTableColumn[] = [
-    {
-        label: 'Role',
-    },
-    {
-        label: 'Actions'
-    }
-]
 
 export function getRoleByName(roles: IRole[], name: string): IRole | undefined {
     for (const role of roles) {
@@ -49,6 +42,8 @@ export function getRoleById(roles: IRole[], id?: number): IRole | undefined {
 }
 
 export const RolesView = (props: Props) => {
+    const t = useTranslations('RolesTable');
+
     function buildItems(): DataTableItem[] {
         const items: DataTableItem[] = [];
 
@@ -60,11 +55,11 @@ export const RolesView = (props: Props) => {
                     <div className="md:flex justify-items-center">
                         <div className="mr-2 my-2">
                             <CheckBoxModal
-                                title={"Permissions"}
-                                description="Permissions are global and active for each videohub."
+                                title={t("actions.permissions.title")}
+                                description={t("actions.permissions.description")}
                                 trigger={
                                     <Button disabled={!role.editable}>
-                                        Permissions
+                                        {t("actions.permissions.name")}
                                     </Button>
                                 }
                                 handleSubmit={async function (checked: string[]): Promise<string | undefined> {
@@ -77,30 +72,29 @@ export const RolesView = (props: Props) => {
                         </div>
                         <div className="mr-2 my-2">
                             <CheckBoxModal
-                                title={"Outputs"}
-                                description="Outputs are given for each specific videohub."
-                                trigger={
-                                    <Tooltip content={"Outputs are given for each videohub. You can change the videohub at the top."} relationship={"description"}>
-                                        <Button disabled={!role.editable}>
-                                            Outputs
-                                        </Button>
-                                    </Tooltip>
-                                }
+                                title={t("actions.outputs.title")}
+                                description={t("actions.outputs.description")}
+                                choices={props.videohub?.outputs.map(output => {
+                                    return { value: output.id.toString(), label: output.label };
+                                }) || []}
                                 handleSubmit={async function (checked: string[]): Promise<string | undefined> {
                                     const videohub: IVideohub | undefined = props.videohub
                                     if (videohub == undefined) {
                                         return "No videohub setup yet."
                                     }
-
                                     const arr: number[] = checked.map(value => Number(value))
-                                    return fetch(`/api/roles/${role.id}/outputs`, getRequestHeader("PUT", { videohub_id: videohub.id, outputs: arr })).then(res => {
-                                        return undefined;
-                                    })
+                                    return fetch(`/api/roles/${role.id}/outputs`, getRequestHeader("PUT",
+                                        { videohub_id: videohub.id, outputs: arr })).then(async res => {
+                                            return res.status == 200 ? undefined : await res.json(); // handle result...
+                                        });
                                 }}
                                 defaultChecked={role.outputs.filter(output => output.videohub_id === props.videohub?.id).map(output => output.output_id.toString())}
-                                choices={props.videohub?.outputs.map(output => {
-                                    return { value: output.id.toString(), label: output.label };
-                                }) || []} />
+                                trigger={
+                                    <Button disabled={!role.editable}>
+                                        {t("actions.outputs.name")}
+                                    </Button>
+                                }
+                            />
                         </div>
                         <div className="my-2">
                             <Button
@@ -114,7 +108,7 @@ export const RolesView = (props: Props) => {
                                         }
                                     });
                                 }}>
-                                Delete
+                                {t("actions.delete")}
                             </Button>
                         </div>
                     </div>
@@ -129,7 +123,14 @@ export const RolesView = (props: Props) => {
 
     return (
         <DataTable
-            columns={columns}
+            columns={[
+                {
+                    label: t("columns.role"),
+                },
+                {
+                    label: t("columns.actions")
+                }
+            ]}
             items={buildItems()} />
     );
 }

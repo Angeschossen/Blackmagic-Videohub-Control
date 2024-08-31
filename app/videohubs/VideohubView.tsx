@@ -17,6 +17,7 @@ import { OutputsView } from '../components/views/OutputsView';
 import { ScheduledButtons } from '../components/views/pushbuttons/UpcomingPushButtonExecutions';
 import { PushButtonsList } from '../components/views/pushbuttons/PushButtonsView';
 import { useSocket } from '../providers/socket-provider';
+import { useTranslations } from 'next-intl';
 
 
 export function getVideohubFromArray(videohubs: IVideohub[], id: number): IVideohub | undefined {
@@ -80,6 +81,7 @@ const VideohubView = (props: {
     const canEdit: boolean = useClientSession(PERMISSION_VIDEOHUB_SCENES_EDIT);
     const router = useRouter();
     const { socket, isConnected } = useSocket();
+    const t = useTranslations('Videohubs');
 
     const socketHandlerRef = useRef<{ videohubs?: IVideohub[], videohub?: IVideohub, onVideohubUpdate: (e: VideohubUpdate) => void, handleReceivedUpcomingScenes: (scenes: IUpcomingScene[]) => void }>({
         videohubs: undefined,
@@ -115,12 +117,12 @@ const VideohubView = (props: {
 
                     switch (e.reason) {
                         case "connection_established": {
-                            sendToast(dispatchToast, "success", "Videohub is back online.", 60 * 1000)
+                            sendToast(dispatchToast, "success", t("events.connection.established"), 60 * 1000)
                             break
                         }
 
                         case "connection_lost": {
-                            sendToast(dispatchToast, "warning", "Videohub went offline.", 60 * 1000)
+                            sendToast(dispatchToast, "warning", t("events.connection.lost"), 60 * 1000)
                             break
                         }
 
@@ -128,9 +130,9 @@ const VideohubView = (props: {
                             const changes: any[] = e.info.changes
 
                             if (changes.length > 0) {
-                                sendToast(dispatchToast, "success", `Received routing update: ${e.data.inputs[changes[0].input].label} to ${e.data.outputs[changes[0].output].label}${changes.length > 1 ? ` and ${changes.length - 1} more.` : ""}`, 5000)
-                            } else {
-                                sendToast(dispatchToast, "success", "Received routing update.", 5000)
+                                // ${changes.length > 1 ? ` and ${changes.length - 1} more.` : ""}`
+                                const input = e.data.inputs[changes[0].input].label, output = e.data.outputs[changes[0].output].label;
+                                sendToast(dispatchToast, "success", t("events.routingUpdate", { input: input, output: output, more: Math.max(changes.length - 1, 0) }), 5000)
                             }
 
                             break
@@ -205,17 +207,15 @@ const VideohubView = (props: {
                         setVideohub(hub)
                         onSelectVideohub(hub);
                     }} />
-                <div className='my-10'>
-                    <h1 className='text-3xl font-bold'>Routing</h1>
-                    <div className='flex justify-end'>
-                        <Switch labelPosition='before' label="Set input" onChange={(_ev, data: SwitchOnChangeData) => {
-                            setSelectInput(data.checked)
-                            setRoutingUpdate(undefined)
-                        }} />
-                    </div>
-                </div>
                 {videohub != undefined &&
-                    <>
+                    <div className='my-10'>
+                        <h1 className='text-3xl font-bold'>{t("routing.title")}</h1>
+                        <div className='flex justify-end'>
+                            <Switch labelPosition='before' label={t("routing.setInput")} onChange={(_ev, data: SwitchOnChangeData) => {
+                                setSelectInput(data.checked)
+                                setRoutingUpdate(undefined)
+                            }} />
+                        </div>
                         <OutputsView
                             selectInput={selectInput}
                             outputs={outputs}
@@ -227,13 +227,13 @@ const VideohubView = (props: {
                         />
                         <div className='mt-10'>
                             <div className='flex justify-between'>
-                                <h1 className='text-3xl font-bold my-1'>Scenes</h1>
+                                <h1 className='text-3xl font-bold my-1'>{t("scenes.title")}</h1>
                                 <ScheduledButtons
                                     videohub={videohub}
                                     scheduledButtons={upcomingScenes}
                                 />
                             </div>
-                            <Tooltip content="Here you can create scenes to execute multiple routing updates at once." relationship="description">
+                            <Tooltip content={t("scenes.edit.tooltip")} relationship="description">
                                 <Button
                                     icon={<EditRegular />}
                                     disabled={!canEditPushButtons(canEdit, videohub)}
@@ -244,7 +244,7 @@ const VideohubView = (props: {
 
                                         router.push(`../videohubs/scenes?videohub=${videohub.id}`);
                                     }}>
-                                    Edit
+                                    {t("scenes.edit.button")}
                                 </Button>
                             </Tooltip>
                             <div className='my-5'>
@@ -254,7 +254,7 @@ const VideohubView = (props: {
                                 />
                             </div>
                         </div>
-                    </>}
+                    </div>}
             </div>
             <Toaster position={isDekstop ? "bottom-end" : "bottom"} limit={5} toasterId={toasterId} />
         </VideohubPage>

@@ -6,12 +6,16 @@ import { ICancelScheduledSceneRequest, IUpcomingScene } from "@/app/interfaces/s
 import { MessageBar } from "../../MessageBar";
 import { FaTrash } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+import { useFormatter, useTranslations } from "next-intl";
 
 async function handleScenceCancel(videohub: number, scene: number, cancel: boolean) {
     await fetch(`/api/videohubs/${videohub}/scenes/${scene}/cancel`, getRequestHeader("PATCH", { cancel: cancel } as ICancelScheduledSceneRequest));
 }
 
 export const ScheduledButtons = (props: { videohub: IVideohub, scheduledButtons: IUpcomingScene[] }) => {
+    const t = useTranslations('ScheduledScenes');
+    const format = useFormatter();
+
     if (props.scheduledButtons.length === 0) {
         return <></>
     }
@@ -29,7 +33,7 @@ export const ScheduledButtons = (props: { videohub: IVideohub, scheduledButtons:
                     handleScenceCancel(props.videohub.id, button.id, !button.cancelled);
                 }} />
             }
-            title={button.cancelled ? "Cancelled" : "Scheduled"}
-            description={`${button.label} at ${getTriggerExportTimeWithoutDay(new Date(button.time)).toLocaleTimeString()}`} />
+            title={button.cancelled ? t("cancelled") : t("scheduled")}
+            description={t("description", {button: button.label, time: format.dateTime(new Date(button.time), {hour: "numeric", minute: "numeric"})})} />
     );
 }

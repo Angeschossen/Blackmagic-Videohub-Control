@@ -8,6 +8,7 @@ import { getRandomKey } from "@/app/util/commonutils";
 import { PERMISSION_VIDEOHUB_EDIT } from "@/app/authentification/permissions";
 import { useClientSession } from "@/app/authentification/client-auth";
 import { getVideohubFromArray } from "@/app/videohubs/VideohubView";
+import { useTranslations } from "next-intl";
 
 
 interface InputProps {
@@ -18,6 +19,7 @@ interface InputProps {
 export const SelectVideohub = (props: InputProps) => {
     const [modalKey, setModalKey] = React.useState(getRandomKey());
     const [open, setOpen] = React.useState(false);
+    const t = useTranslations('VideohubSelection');
     const canEdit: boolean = useClientSession(PERMISSION_VIDEOHUB_EDIT);
     const [checkedValues, setCheckedValues] = React.useState<Record<string, string[]>>({
         select: props.videohubs.length == 0 ? [] : [props.videohubs[0].id.toString()]
@@ -53,34 +55,35 @@ export const SelectVideohub = (props: InputProps) => {
         <>
             <Menu>
                 <MenuTrigger>
-                    <MenuButton>Select Videohub</MenuButton>
+                    <MenuButton>{t("button")}</MenuButton>
                 </MenuTrigger>
-                <MenuPopover>
-                    <MenuList checkedValues={checkedValues} onCheckedValueChange={onChange}>
-                        {props.videohubs.map(videohub =>
-                            <MenuItemRadio key={`videohub_${videohub.id}`} name="select" value={videohub.id.toString()}>
-                                {videohub.name}
-                            </MenuItemRadio>
-                        )}
-                        <MenuItem
-                            icon={<AddRegular />}
-                            disabled={!canEdit}
-                            onClick={() => {
-                                setOpen(true)
-                                setModalKey(getRandomKey())
-                            }}>
-                            Add
-                        </MenuItem>
-                    </MenuList>
-                </MenuPopover>
+<MenuPopover>
+    <MenuList checkedValues={checkedValues} 
+    onCheckedValueChange={onChange}>
+        {props.videohubs.map(videohub =>
+            <MenuItemRadio key={`videohub_${videohub.id}`} 
+            name="select" value={videohub.id.toString()}>
+                {videohub.name}
+            </MenuItemRadio>
+        )}
+        <MenuItem
+            icon={<AddRegular />}
+            disabled={!canEdit}
+            onClick={() => {
+                setOpen(true)
+                setModalKey(getRandomKey())
+            }}>
+            {t("add")}
+        </MenuItem>
+    </MenuList>
+</MenuPopover>
             </Menu>
             <EditVideohubModal
                 key={modalKey}
                 open={open}
                 onOpenChange={(state: boolean) => setOpen(state)}
                 videohubs={props.videohubs}
-                onVideohubUpdate={(videohub: IVideohub) => setOpen(false)}
-                title={"Add Videohub"} />
+                onVideohubUpdate={(videohub: IVideohub) => setOpen(false)}/>
         </>
     )
 }

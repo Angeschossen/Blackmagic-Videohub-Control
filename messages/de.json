@@ -1,0 +1,236 @@
+{
+  "Navigation": {
+    "navigation": "Navigation",
+    "items": {
+      "home": "Startseite",
+      "videohubs": "Videohubs",
+      "administration": "Administration"
+    }
+  },
+  "Header": {
+    "welcome": "Willkommen {user}!",
+    "user": {
+      "name": "Benutzer: {user}",
+      "role": "Rolle: {role}",
+      "signOut": "Ausloggen"
+    }
+  },
+  "Home": {
+    "title": "Letzte Aktivitäten"
+  },
+  "VideohubActivities": {
+    "none": "Noch keine Aktivitäten.",
+    "connection": {
+      "established": "Verbindung zum Videohub hergestellt.",
+      "lost": "Verbindung zum Videohub verloren."
+    },
+    "rescheduled": {
+      "failed": "Automatisches anwenden einer Szene fehlgeschlagen.",
+      "success": "Automatisches anwenden einer Szene war erfolgreich."
+    },
+    "scheduled": {
+      "failed": "Szene konnte nicht automatisch angewandt werden.",
+      "success": "Szene erfolgreich automatisch angewandt."
+    }
+  },
+  "Videohubs": {
+    "routing": {
+      "title": "Belegung",
+      "setInput": "Eingang setzen"
+    },
+    "scenes": {
+      "title": "Szenen",
+      "edit": {
+        "button": "Bearbeiten",
+        "tooltip": "Hier können Szenen erstellt werden mit denen mehrere Ausgänge mit nur einem Klick geändert werden können."
+      }
+    },
+    "events": {
+      "connection": {
+        "established": "Der Videohub ist nun online.",
+        "lost": "Verbindung zum Videohub verloren."
+      },
+      "routingUpdate": "Belegung wurde geändert: {input} auf {output}{more, plural, =0 {.} =1 { und eine weitere Änderung.} other { und # weitere Änderungen.}}"
+    }
+  },
+  "RoutingTable": {
+    "none": "Keiner",
+    "unknown": "Unbekannt",
+    "columns": {
+      "output": "Ausgang",
+      "input": "Eingang",
+      "defaultInput": "Standardeingang"
+    }
+  },
+  "ScheduledScenes": {
+    "cancelled": "Abgebrochen",
+    "scheduled": "Geplant",
+    "description": "{button} um {time}"
+  },
+  "VideohubHeader": {
+    "status": {
+      "none": {
+        "title": "None setup",
+        "description": "Es wurde noch kein Videohub konfiguriert."
+      },
+      "connected": {
+        "title": "Verbunden",
+        "description": "Der Videohub kann kontrolliert werden."
+      },
+      "disconnected": {
+        "title": "Verbindung getrennt",
+        "description": "Der Videohub ist offline."
+      }
+    }
+  },
+  "Scenes": {
+    "title": "Szenen",
+    "none": "Kein Videohub ausgewählt.",
+    "add": "Hinzufügen"
+  },
+  "ScenesTable": {
+    "defaultDescription": "{amount, plural, =0 {Keine Änderungen} =1 {Eine Änderung} other {# Änderungen}}",
+    "actions": {
+      "edit": "Bearbeiten",
+      "schedule": "Planen"
+    },
+    "columns": {
+      "name": "Name",
+      "description": "Beschreibung",
+      "actions": "Aktionen"
+    }
+  },
+  "SceneScheduleModal": {
+    "title": "Szene automatisch anwenden",
+    "description": "Für jede Szene können mehrere Auslöser hinzugefügt werden. Szenen können jedoch nur angewandt werden, wenn der Videohub erreichbar ist.",
+    "add": "Auslöser hinzufügen",
+    "fields": {
+      "type": {
+        "title": "Typ",
+        "values": {
+          "time": "Zeit",
+          "sunrise": "Sonnenaufgang",
+          "sunset": "Sonnenuntergang"
+        }
+      },
+      "time": "Zeit",
+      "days": {
+        "title": "Tage",
+        "placeholder": "Tage auswählen",
+        "values": {
+          "sunday": "Sonntag",
+          "monday": "Montag",
+          "tuesday": "Dienstag",
+          "wednesday": "Mittwoch",
+          "thursday": "Donnerstag",
+          "friday": "Freitag",
+          "saturday": "Samstag"
+        }
+      }
+    }
+  },
+  "UsersTable": {
+    "columns": {
+      "role": "Rolle",
+      "actions": "Aktionen"
+    },
+    "role": "Rolle auswählen",
+    "actions": {
+      "delete": "Löschen"
+    }
+  },
+  "Administration": {
+    "roles": {
+      "title": "Rollen",
+      "add": "Rolle hinzufügen"
+    },
+    "users": "Benutzer"
+  },
+  "RolesTable": {
+    "actions": {
+      "outputs": {
+        "name": "Ausgänge",
+        "title": "Ausgänge bearbeiten",
+        "description": "Der Zugriff auf die Ausgänge kann für jeden Videohub einzeln konfiguriert werden."
+      },
+      "permissions": {
+        "name": "Berechtigungen",
+        "title": "Berechtigungen bearbeiten",
+        "description": "Berechtigungen sind global und aktiv für alle Videohubs."
+      },
+      "delete": "Löschen"
+    },
+    "columns": {
+      "role": "Rolle",
+      "actions": "Aktionen"
+    }
+  },
+  "RoleEditModal": {
+    "title": {
+      "create": "Rolle erstellen",
+      "edit": "Rolle bearbeiten"
+    },
+    "fields": {
+      "name": "Name"
+    }
+  },
+  "SceneEditModal": {
+    "title": {
+      "create": "Szene erstellen",
+      "edit": "Szene bearbeiten"
+    },
+    "sections": {
+      "general": {
+        "title": "Allgemeines",
+        "fields": {
+          "name": "Name",
+          "description": "Beschreibung"
+        }
+      },
+      "display": {
+        "title": "Anzeige",
+        "fields": {
+          "show": "Anzeigen",
+          "sorting": "Sortierung",
+          "color": "Farbe"
+        }
+      },
+      "routings": {
+        "title": "Belegungen",
+        "add": "Hinzufügen",
+        "fields": {
+          "output": {
+            "title": "Ausgang",
+            "placeholder": "Ausgang auswählen"
+          },
+          "input": {
+            "title": "Eingang",
+            "placeholder": "Eingang auswählen"
+          }
+        }
+      }
+    }
+  },
+  "VideohubSelection": {
+    "button": "Videohub auswählen",
+    "add": "Hinzufügen"
+  },
+  "EditVideohubModal": {
+    "title": "Videohub hinzufügen",
+    "fields": {
+      "ip": "IP-Adresse",
+      "name": {
+        "title": "Name",
+        "placeholder": "Vom Gerät holen"
+      },
+      "latitude": "Längengrad",
+      "longitude": "Breitengrad"
+    }
+  },
+  "InputModal": {
+    "buttons": {
+      "close": "Schließen",
+      "submit": "Bestätigen"
+    }
+  }
+}

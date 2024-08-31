@@ -14,6 +14,7 @@ import { IVideohub } from "@/app/interfaces/videohub";
 import { hasRoleOutput, IUser } from "@/app/authentification/interfaces";
 import { AddRegular } from "@fluentui/react-icons";
 import { Scene, SceneAction } from "@prisma/client";
+import { useTranslations } from "next-intl";
 
 interface Props {
     onButtonUpdate: (button: IScene, action: "create" | "update" | "delete") => void
@@ -52,6 +53,7 @@ const RoutingComponent = (props: {
     const key: string | number = props.routing.actionId?.toString() || getRandomKey()
     const inputKey = `${key}_input`
     const outputKey = `${key}_output`
+    const t = useTranslations('SceneEditModal');
 
     const out = props.routing.output == undefined ? undefined : props.videohub.outputs[props.routing.output].label;
     const inp = props.routing.input == undefined ? undefined : props.videohub.inputs[props.routing.input].label;
@@ -67,13 +69,13 @@ const RoutingComponent = (props: {
                     onClick={() => props.onDelete()}
                 />
             </div>
-            <Label htmlFor={outputKey}>Output</Label>
+            <Label htmlFor={outputKey}>{t("sections.routings.fields.output.title")}</Label>
             <Dropdown
                 style={{ minWidth: 'auto' }}
                 key={outputKey}
                 defaultSelectedOptions={out == undefined ? [] : [out]}
                 defaultValue={out}
-                placeholder="Select output"
+                placeholder={t("sections.routings.fields.output.placeholder")}
                 onOptionSelect={(_event: any, data: any) => {
                     props.onSelectOutput(getIdFromValue(props.videohub.outputs, data.optionValue))
                 }}>
@@ -82,13 +84,13 @@ const RoutingComponent = (props: {
                         {output.label}
                     </Option>)}
             </Dropdown>
-            <Label htmlFor={inputKey}>Input</Label>
+            <Label htmlFor={inputKey}>{t("sections.routings.fields.input.title")}</Label>
             <Dropdown
                 style={{ minWidth: 'auto' }}
                 key={inputKey}
                 defaultSelectedOptions={inp == undefined ? [] : [inp]}
                 defaultValue={inp}
-                placeholder="Select input"
+                placeholder={t("sections.routings.fields.input.placeholder")}
                 onOptionSelect={(_event: any, data: any) => {
                     props.onSelectInput(getIdFromValue(props.videohub.inputs, data.optionValue))
                 }}>
@@ -107,6 +109,7 @@ export const EditPushButtonModal = (props: Props) => {
     const inputDescriptionId = useId('input_description')
     const inputDisplayId = useId('display')
     const userId = useGetClientId()
+    const t = useTranslations('SceneEditModal');
 
     const [name, setName] = React.useState<InputState>({ value: props.button?.label || "" })
     const [routings, setRoutings] = React.useState<Routing[]>(props.button?.actions.map(action => createRouting(action)) || [createRouting(undefined)])
@@ -197,7 +200,7 @@ export const EditPushButtonModal = (props: Props) => {
     // InputField: Name, Description, Sorting
     return (
         <InputModal
-            title={props.button == undefined ? "Create Scene" : "Edit Scene"}
+            title={props.button == undefined ? t("title.create") : t("title.edit")}
             trigger={props.trigger}
             additionalTrigger={props.button != undefined ?
                 <Button icon={<DeleteRegular />} style={{ backgroundColor: '#ed2b2b' }} onClick={async () => {
@@ -263,10 +266,10 @@ export const EditPushButtonModal = (props: Props) => {
             <div>
                 <Accordion multiple collapsible defaultOpenItems={[1, 3]}>
                     <AccordionItem value={1}>
-                        <AccordionHeader size="large" icon={<TextboxRegular />}>General</AccordionHeader>
+                        <AccordionHeader size="large" icon={<TextboxRegular />}>{t("sections.general.title")}</AccordionHeader>
                         <AccordionPanel>
                             <div className="flex flex-col">
-                                <Label htmlFor={inputNameId}>Name</Label>
+                                <Label htmlFor={inputNameId}>{t("sections.general.fields.name")}</Label>
                                 <Field>
                                     <Input
                                         required
@@ -275,7 +278,7 @@ export const EditPushButtonModal = (props: Props) => {
                                         onChange={onChangeName}
                                         id={inputNameId} />
                                 </Field>
-                                <Label htmlFor={inputDescriptionId}>Description</Label>
+                                <Label htmlFor={inputDescriptionId}>{t("sections.general.fields.description")}</Label>
                                 <Field>
                                     <Input
                                         value={description.value as string}
@@ -286,16 +289,16 @@ export const EditPushButtonModal = (props: Props) => {
                         </AccordionPanel>
                     </AccordionItem>
                     <AccordionItem value={2}>
-                        <AccordionHeader size="large" icon={<SlideHideRegular />}>Display</AccordionHeader>
+                        <AccordionHeader size="large" icon={<SlideHideRegular />}>{t("sections.display.title")}</AccordionHeader>
                         <AccordionPanel>
                             <div className="flex flex-col">
-                                <Label htmlFor={inputDisplayId}>Display</Label>
+                                <Label htmlFor={inputDisplayId}>{t("sections.display.fields.show")}</Label>
                                 <Switch
                                     checked={display}
                                     id={inputDisplayId}
                                     onChange={onDisplayChange}
                                 />
-                                <Label htmlFor={inputSortingId}>Sorting</Label>
+                                <Label htmlFor={inputSortingId}>{t("sections.display.fields.sorting")}</Label>
                                 <Field id={inputSortingId}>
                                     <Input
                                         required
@@ -303,7 +306,7 @@ export const EditPushButtonModal = (props: Props) => {
                                         value={sorting.value}
                                         onChange={onChangeSorting} />
                                 </Field>
-                                <Label>Color</Label>
+                                <Label>{t("sections.display.fields.color")}</Label>
                                 <PickColor
                                     color={color == undefined ? undefined : getColorFromString(color)}
                                     onChange={(color) => {
@@ -314,7 +317,7 @@ export const EditPushButtonModal = (props: Props) => {
                         </AccordionPanel>
                     </AccordionItem>
                     <AccordionItem value={3}>
-                        <AccordionHeader size="large" icon={<VideoSwitchRegular />}>Routings</AccordionHeader>
+                        <AccordionHeader size="large" icon={<VideoSwitchRegular />}>{t("sections.routings.title")}</AccordionHeader>
                         <AccordionPanel>
                             <div>
                                 {routings.map((routing, index) =>
@@ -343,7 +346,7 @@ export const EditPushButtonModal = (props: Props) => {
                                         arr.push(createRouting(undefined))
                                         setRoutings(arr)
                                     }}>
-                                    Add Routing
+                                    {t("sections.routings.add")}
                                 </Button>
                             </div>
                         </AccordionPanel>
