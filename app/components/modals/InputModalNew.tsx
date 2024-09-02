@@ -44,8 +44,7 @@ export const InputModal = (props: InputProps) => {
                 }
 
                 setOpen(data.open)
-            }}
-            modalType="non-modal">
+            }}>
             <>
                 {props.trigger != undefined &&
                     <DialogTrigger>
