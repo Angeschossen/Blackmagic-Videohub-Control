@@ -6,6 +6,7 @@ import { getRandomKey } from "@/app/util/commonutils";
 import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IScene } from "@/app/interfaces/scenes";
 import { IRoutingRequest, IVideohub, RoutingUpdateResult } from "@/app/interfaces/videohub";
+import { getSceneDescription } from "./PushButtonsTableView";
 
 interface InputProps {
   videohub?: IVideohub,
@@ -98,7 +99,7 @@ export const PushButtonsList = (props: InputProps) => {
           <div className="grid justify-items-center space-y-4 md:flex md:justify-items-start md:space-x-4 md:space-y-0">
             {props.pushbuttons.sort(sortButtons).map((button, key) => {
               return (
-                <CompoundButton className={styles.longText} disabled={!isRequestComplete()} key={key} secondaryContent={button.description || `Click to apply ${button.actions.length} changes(s).`} style={{ backgroundColor: button.color }}
+                <CompoundButton className={styles.longText} disabled={!isRequestComplete()} key={key} secondaryContent={getSceneDescription(button)} style={{ backgroundColor: button.color }}
                   onClick={async () => {
                     if (props.videohub == undefined || !isRequestComplete()) {
                       return
