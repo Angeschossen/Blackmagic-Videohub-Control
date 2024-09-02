@@ -1,11 +1,9 @@
-import { Stack } from "@fluentui/react";
-import { Button, Tooltip } from "@fluentui/react-components";
+import { Button } from "@fluentui/react-components";
 import { TableCellLayout } from "@fluentui/react-components";
 import { Delete16Regular } from '@fluentui/react-icons';
-import { DataTable, DataTableColumn, DataTableItem } from "../../DataTableNew";
+import { DataTable, DataTableItem } from "../../DataTableNew";
 import { CheckboxChoice, CheckBoxModal } from "../../modals/admin/CheckBoxModal";
 import { TOGGLEABLE_PERMISSIONS } from "@/app/authentification/permissions";
-import { stackTokens } from "@/app/util/styles";
 import { getRequestHeader } from "@/app/util/fetchutils";
 import { IRole } from "@/app/authentification/interfaces";
 import { IVideohub } from "@/app/interfaces/videohub";

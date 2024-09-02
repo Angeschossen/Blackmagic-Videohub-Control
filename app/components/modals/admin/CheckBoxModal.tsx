@@ -1,7 +1,6 @@
 import { Checkbox, CheckboxOnChangeData } from "@fluentui/react-components";
 import React, { ChangeEvent } from "react";
 import { InputModal } from "../InputModalNew";
-import { useInputStyles } from "@/app/util/styles";
 
 
 export interface CheckboxChoice {
@@ -20,8 +19,6 @@ interface Props {
 
 export const CheckBoxModal = (props: Props) => {
     const [checkedValues, setCheckedValues] = React.useState<string[]>(props.defaultChecked);
-    const styles = useInputStyles();
-
 
     const handleSelected = (id: string) => {
         setCheckedValues(prev => [...prev, id]);
@@ -43,7 +40,7 @@ export const CheckBoxModal = (props: Props) => {
             handleSubmit={async function (): Promise<string | undefined> {
                 return props.handleSubmit(checkedValues);
             }}>
-            <div className={styles.root}>
+            <div className="flex flex-col">
                 {props.choices.map(choice =>
                     <Checkbox key={`checkbox_${choice.value}`} checked={checkedValues.indexOf(choice.value) != -1} label={choice.label} onChange={(_ev: ChangeEvent<HTMLInputElement>, data: CheckboxOnChangeData) => {
                         if (data.checked) {

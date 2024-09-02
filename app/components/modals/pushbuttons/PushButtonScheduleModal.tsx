@@ -246,16 +246,18 @@ export const PushButtonScheduleModal = (props: { button: IScene, trigger: JSX.El
 
                 return Promise.resolve(undefined)
             }}>
-            {triggers.map((trigger, index) => <div className="py-2" key={`trigger_${index}`}>{createTriggerComponent(trigger, index)}</div>)}
-            <Button
-                icon={<AddRegular />}
-                onClick={() => {
-                    const arr = [...triggers]
-                    arr.push({ id: "null", pushbutton_id: props.button.id, type: "TIME", time: getDefaultDate(), days: [] })
-                    setTriggers(arr)
-                }}>
-                {t("add")}
-            </Button>
+            <div className="flex flex-col space-y-3">
+                {triggers.map((trigger, index) => <div className="rounded-md border-2 border-gray-300 p-2 hover:bg-gray-50" key={`trigger_${index}`}>{createTriggerComponent(trigger, index)}</div>)}
+                <Button
+                    icon={<AddRegular />}
+                    onClick={() => {
+                        const arr = [...triggers]
+                        arr.push({ id: "null", pushbutton_id: props.button.id, type: "TIME", time: getDefaultDate(), days: [] })
+                        setTriggers(arr)
+                    }}>
+                    {t("add")}
+                </Button>
+            </div>
         </InputModal>
     )
 }

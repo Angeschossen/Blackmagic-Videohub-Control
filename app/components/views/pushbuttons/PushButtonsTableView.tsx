@@ -1,14 +1,12 @@
 import { Button } from "@fluentui/react-components";
 import { TableCellLayout } from "@fluentui/react-components";
 import { CalendarEditRegular, EditRegular } from "@fluentui/react-icons";
-import DataTable, { DataTableColumn, DataTableItem } from "../../DataTableNew";
+import DataTable, { DataTableItem } from "../../DataTableNew";
 import { EditPushButtonModal } from "../../modals/pushbuttons/EditPushButtonModalNew";
 import { PushButtonScheduleModal } from "../../modals/pushbuttons/PushButtonScheduleModal";
 import { sortButtons } from "./PushButtonsView";
-import { Stack } from "@fluentui/react";
 import { useClientSession } from "@/app/authentification/client-auth";
 import { PERMISSION_VIDEOHUB_SCENES_SCHEDULE } from "@/app/authentification/permissions";
-import { stackTokens } from "@/app/util/styles";
 import { IVideohub } from "@/app/interfaces/videohub";
 import { IScene } from "@/app/interfaces/scenes";
 import { IUser } from "@/app/authentification/interfaces";

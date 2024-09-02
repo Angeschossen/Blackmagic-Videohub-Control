@@ -1,4 +1,3 @@
-import { useInputStyles } from "@/app/util/styles";
 import { Input, InputProps, Label } from "@fluentui/react-components";
 import { Field, FieldProps } from "@fluentui/react-components";
 import React from "react";
@@ -14,14 +13,13 @@ export interface InputState {
 
 export const HandledInputField = (props: { id: string, value: string, onChangeInput: (value: string) => string | undefined } & FieldProps) => {
     const [data, setData] = React.useState<{ error?: string, value: string }>({ error: undefined, value: props.value })
-    const styles = useInputStyles()
 
     const onChangeInput: InputProps['onChange'] = (_ev, data) => {
         setData({ error: props.onChangeInput(data.value), value: data.value })
     }
 
     return (
-        <div className={styles.root}>
+        <div>
             <Label htmlFor={props.id}>Name</Label>
             <Field
                 id={props.id}

@@ -1,5 +1,5 @@
 import { getColorFromString, Label, Stack } from "@fluentui/react";
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Dropdown, Input, InputProps, Option, Switch, useId } from "@fluentui/react-components";
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Button, Dropdown, Input, InputProps, Option, Switch, Textarea, TextareaOnChangeData, useId } from "@fluentui/react-components";
 import { Field } from "@fluentui/react-components";
 import { DeleteRegular, SlideHideRegular, TextboxRegular, VideoSwitchRegular } from "@fluentui/react-icons";
 import React from "react";
@@ -133,7 +133,7 @@ export const EditPushButtonModal = (props: Props) => {
         setSorting(validateSorting(data.value))
     }
 
-    const onChangeDescription: InputProps['onChange'] = (_ev, data) => {
+    const onChangeDescription = (ev: React.ChangeEvent<HTMLTextAreaElement>, data: TextareaOnChangeData) => {
         setDescription(validateDescription(data.value))
     }
 
@@ -263,96 +263,91 @@ export const EditPushButtonModal = (props: Props) => {
 
                 return Promise.resolve("Please specify at leat one complete routing with an input and output.")
             }}>
-            <div>
-                <Accordion multiple collapsible defaultOpenItems={[1, 3]}>
-                    <AccordionItem value={1}>
-                        <AccordionHeader size="large" icon={<TextboxRegular />}>{t("sections.general.title")}</AccordionHeader>
-                        <AccordionPanel>
+            <Accordion multiple collapsible defaultOpenItems={[1, 3]}>
+                <AccordionItem value={1}>
+                    <AccordionHeader size="large" icon={<TextboxRegular />}>{t("sections.general.title")}</AccordionHeader>
+                    <AccordionPanel>
+                        <div className="space-y-3">
                             <div className="flex flex-col">
                                 <Label htmlFor={inputNameId}>{t("sections.general.fields.name")}</Label>
-                                <Field>
-                                    <Input
-                                        required
-                                        input={{ style: { width: 248 } }}
-                                        value={name.value as string}
-                                        onChange={onChangeName}
-                                        id={inputNameId} />
-                                </Field>
-                                <Label htmlFor={inputDescriptionId}>{t("sections.general.fields.description")}</Label>
-                                <Field>
-                                    <Input
-                                        value={description.value as string}
-                                        onChange={onChangeDescription}
-                                        id={inputDescriptionId} />
-                                </Field>
+                                <Input
+                                    required
+                                    value={name.value as string}
+                                    onChange={onChangeName}
+                                    id={inputNameId} />
                             </div>
-                        </AccordionPanel>
-                    </AccordionItem>
-                    <AccordionItem value={2}>
-                        <AccordionHeader size="large" icon={<SlideHideRegular />}>{t("sections.display.title")}</AccordionHeader>
-                        <AccordionPanel>
                             <div className="flex flex-col">
-                                <Label htmlFor={inputDisplayId}>{t("sections.display.fields.show")}</Label>
-                                <Switch
-                                    checked={display}
-                                    id={inputDisplayId}
-                                    onChange={onDisplayChange}
-                                />
-                                <Label htmlFor={inputSortingId}>{t("sections.display.fields.sorting")}</Label>
-                                <Field id={inputSortingId}>
-                                    <Input
-                                        required
-                                        type="number"
-                                        value={sorting.value}
-                                        onChange={onChangeSorting} />
-                                </Field>
-                                <Label>{t("sections.display.fields.color")}</Label>
-                                <PickColor
-                                    color={color == undefined ? undefined : getColorFromString(color)}
-                                    onChange={(color) => {
-                                        setColor(color.str)
-                                    }}
-                                />
+                                <Label htmlFor={inputDescriptionId}>{t("sections.general.fields.description")}</Label>
+                                <Textarea
+                                    value={description.value as string}
+                                    onChange={onChangeDescription}
+                                    id={inputDescriptionId} />
                             </div>
-                        </AccordionPanel>
-                    </AccordionItem>
-                    <AccordionItem value={3}>
-                        <AccordionHeader size="large" icon={<VideoSwitchRegular />}>{t("sections.routings.title")}</AccordionHeader>
-                        <AccordionPanel>
-                            <div>
-                                {routings.map((routing, index) =>
-                                    <div className="my-4" key={`routing_${index}`}>
-                                        <RoutingComponent
-                                            num={index + 1}
-                                            user={props.user}
-                                            key={`routing_${index}`}
-                                            videohub={props.videohub}
-                                            routing={routing}
-                                            onSelectOutput={function (index?: number | undefined): void {
-                                                updateRouting(routing, index, routing.input)
-                                            }} onSelectInput={function (index?: number | undefined): void {
-                                                updateRouting(routing, routing.output, index)
-                                            }}
-                                            onDelete={() => {
-                                                removeRouting(routing)
-                                            }}
-                                        />
-                                    </div>
-                                )}
-                                <Button
-                                    icon={<AddRegular />}
-                                    onClick={() => {
-                                        const arr = [...routings]
-                                        arr.push(createRouting(undefined))
-                                        setRoutings(arr)
-                                    }}>
-                                    {t("sections.routings.add")}
-                                </Button>
-                            </div>
-                        </AccordionPanel>
-                    </AccordionItem>
-                </Accordion>
-            </div>
+                        </div>
+                    </AccordionPanel>
+                </AccordionItem>
+                <AccordionItem value={2}>
+                    <AccordionHeader size="large" icon={<SlideHideRegular />}>{t("sections.display.title")}</AccordionHeader>
+                    <AccordionPanel>
+                        <Label htmlFor={inputDisplayId}>{t("sections.display.fields.show")}</Label>
+                        <Switch
+                            checked={display}
+                            id={inputDisplayId}
+                            onChange={onDisplayChange}
+                        />
+                        <Label htmlFor={inputSortingId}>{t("sections.display.fields.sorting")}</Label>
+                        <Field id={inputSortingId}>
+                            <Input
+                                required
+                                type="number"
+                                value={sorting.value}
+                                onChange={onChangeSorting} />
+                        </Field>
+                        <Label>{t("sections.display.fields.color")}</Label>
+                        <PickColor
+                            color={color == undefined ? undefined : getColorFromString(color)}
+                            onChange={(color) => {
+                                setColor(color.str)
+                            }}
+                        />
+                    </AccordionPanel>
+                </AccordionItem>
+                <AccordionItem value={3}>
+                    <AccordionHeader size="large" icon={<VideoSwitchRegular />}>{t("sections.routings.title")}</AccordionHeader>
+                    <AccordionPanel>
+                        <div className="flex flex-col space-y-3">
+                            {routings.map((routing, index) =>
+                                <div className="rounded-md border-2 border-gray-300 p-2 hover:bg-gray-50" key={`routing_${index}`}>
+                                    <RoutingComponent
+                                        num={index + 1}
+                                        user={props.user}
+                                        key={`routing_${index}`}
+                                        videohub={props.videohub}
+                                        routing={routing}
+                                        onSelectOutput={function (index?: number | undefined): void {
+                                            updateRouting(routing, index, routing.input)
+                                        }} onSelectInput={function (index?: number | undefined): void {
+                                            updateRouting(routing, routing.output, index)
+                                        }}
+                                        onDelete={() => {
+                                            removeRouting(routing)
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            <Button
+                                icon={<AddRegular />}
+                                onClick={() => {
+                                    const arr = [...routings]
+                                    arr.push(createRouting(undefined))
+                                    setRoutings(arr)
+                                }}>
+                                {t("sections.routings.add")}
+                            </Button>
+                        </div>
+                    </AccordionPanel>
+                </AccordionItem>
+            </Accordion>
         </InputModal>
     );
 }

@@ -2,7 +2,6 @@ import { Input, InputProps, Label, useId } from "@fluentui/react-components";
 import React from "react";
 import { InputModal } from "../InputModalNew";
 import { getRequestHeader } from "@/app/util/fetchutils";
-import { useInputStyles } from "@/app/util/styles";
 import { IRole } from "@/app/authentification/interfaces";
 import { useTranslations } from "next-intl";
 
@@ -15,7 +14,6 @@ interface Props {
 }
 
 export const RoleModal = (props: Props) => {
-    const styles = useInputStyles();
     const inputIdIP = useId('ip');
     const t = useTranslations('RoleEditModal');
     const [name, setName] = React.useState<string>("");
@@ -73,7 +71,7 @@ export const RoleModal = (props: Props) => {
                     return undefined;
                 })
             }}>
-            <div className={styles.root}>
+            <div className="flex flex-col">
                 <Label htmlFor={inputIdIP}>{t("fields.name")}</Label>
                 <Input value={name} onChange={onChangeName} id={inputIdIP} />
             </div>

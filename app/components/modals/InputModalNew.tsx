@@ -18,20 +18,11 @@ export interface InputModalProps {
     additionalTrigger?: JSX.Element,
 }
 
-const useStyles = makeStyles({
-    content: {
-        display: 'flex',
-        flexDirection: 'column',
-        rowGap: '10px',
-    }
-});
-
 export const InputModal = (props: InputProps) => {
     const [error, setError] = React.useState<string | undefined>();
     const [open, setOpen] = React.useState<boolean>(props.open || false)
     const t = useTranslations('InputModal');
 
-    const styles = useStyles();
     const handleSubmit = (ev: React.FormEvent) => {
         ev.preventDefault();
 
@@ -65,18 +56,16 @@ export const InputModal = (props: InputProps) => {
                 <form onSubmit={handleSubmit}>
                     <DialogBody>
                         <DialogTitle>{props.title}</DialogTitle>
-                        <DialogContent className={styles.content}>
-                            <div className="flex flex-col items-center">
-                                {props.description}
-                                <div>
-                                    {props.children}
-                                    {error != undefined &&
-                                        <AlertMessage
-                                            style={{ margin: 5 }}
-                                            intent="error"
-                                            message={error} />
-                                    }
-                                </div>
+                        <DialogContent>
+                            {props.description}
+                            <div className="flex flex-col items-center my-4 space-y-3">
+                                {props.children}
+                                {error != undefined &&
+                                    <AlertMessage
+                                        style={{ margin: 5 }}
+                                        intent="error"
+                                        message={error} />
+                                }
                             </div>
                         </DialogContent>
                         <DialogActions>

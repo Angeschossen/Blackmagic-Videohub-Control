@@ -1,8 +1,7 @@
 import { Input, InputProps, Label, useId } from "@fluentui/react-components";
 import React from "react";
 import { InputModal } from "./InputModalNew";
-import { useInputStyles } from "@/app/util/styles";
-import {  getRequestHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { IVideohub } from "@/app/interfaces/videohub";
 import { useTranslations } from "next-intl";
 
@@ -20,14 +19,12 @@ export const EditVideohubModal = (props: Props) => {
     const inputIdName = useId('name');
     const inputLatitude = useId('latitude');
     const inputLongitude = useId('longitude');
-    
+
     const t = useTranslations('EditVideohubModal');
     const [ip, setIP] = React.useState(props.edit?.ip || "");
     const [name, setName] = React.useState(props.edit?.name || "");
     const [latitude, setLatitude] = React.useState(props.edit?.latitude || 0);
     const [longitude, setLongitude] = React.useState(props.edit?.longitude || 0);
-
-    const styles = useInputStyles();
 
     const onChangeIP: InputProps['onChange'] = (_ev, data) => {
         setIP(data.value);
@@ -96,16 +93,22 @@ export const EditVideohubModal = (props: Props) => {
                 })
             }}
             title={t("title")}>
-            <div className={styles.root}>
-                <Label htmlFor={inputIdIP}>{t("fields.ip")}</Label>
-                <Input required value={ip} onChange={onChangeIP} id={inputIdIP} />
-                <Label htmlFor={inputIdName}>{t("fields.name.title")}</Label>
-                <Input value={name} placeholder={t("fields.name.placeholder")} onChange={onChangeName} id={inputIdName} />
-                <Label htmlFor={inputLatitude}>{t("fields.latitude")}</Label>
-                <Input required type="number" onChange={onChangeLatitude} id={inputLatitude}></Input>
-                <Label htmlFor={inputLongitude}>{t("fields.longitude")}</Label>
-                <Input required type="number" onChange={onChangeLongitude} id={inputLongitude}></Input>
-            </div>
+                <div className="flex flex-col">
+                    <Label htmlFor={inputIdIP}>{t("fields.ip")}</Label>
+                    <Input required value={ip} onChange={onChangeIP} id={inputIdIP} />
+                </div>
+                <div className="flex flex-col">
+                    <Label htmlFor={inputIdName}>{t("fields.name.title")}</Label>
+                    <Input value={name} placeholder={t("fields.name.placeholder")} onChange={onChangeName} id={inputIdName} />
+                </div>
+                <div className="flex flex-col">
+                    <Label htmlFor={inputLatitude}>{t("fields.latitude")}</Label>
+                    <Input required type="number" onChange={onChangeLatitude} id={inputLatitude}></Input>
+                </div>
+                <div className="flex flex-col">
+                    <Label htmlFor={inputLongitude}>{t("fields.longitude")}</Label>
+                    <Input required type="number" onChange={onChangeLongitude} id={inputLongitude}></Input>
+                </div>
         </InputModal>
     )
 }
