@@ -24,17 +24,15 @@ export const ScheduledButtons = (props: { videohub: IVideohub, scheduledButtons:
     const button: IUpcomingScene = props.scheduledButtons[0]
     return (
         <MessageBar
-            data-tooltip-target={"tooltip-animation"}
             icon={button.cancelled ?
-                <TbLetterX onClick={() => {
-                    handleScenceCancel(props.videohub.id, button.id, !button.cancelled);
-                }} />
+                <TbLetterX />
                 :
-                <IoIosCheckmarkCircle color="green" onClick={() => {
-                    handleScenceCancel(props.videohub.id, button.id, !button.cancelled);
-                }} />
-            }
+                <IoIosCheckmarkCircle color="green" />}
             title={button.cancelled ? t("cancelled") : t("scheduled")}
-            description={t("description", { button: button.label, time: format.dateTime(new Date(button.time), { hour: "numeric", minute: "numeric" }) })} />
+            description={t("description", { button: button.label, time: format.dateTime(new Date(button.time), { hour: "numeric", minute: "numeric" }) })}
+            hover={true}
+            onClick={function (): void {
+                handleScenceCancel(props.videohub.id, button.id, !button.cancelled);
+            }} />
     );
 }

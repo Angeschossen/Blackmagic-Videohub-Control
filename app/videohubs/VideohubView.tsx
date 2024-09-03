@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Switch, SwitchOnChangeData, Toaster, Tooltip, useId, useToastController } from '@fluentui/react-components';
+import { Button, Switch, SwitchOnChangeData, Toaster, ToastIntent, Tooltip, useId, useToastController } from '@fluentui/react-components';
 import { EditRegular } from '@fluentui/react-icons';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef } from 'react';
@@ -84,8 +84,15 @@ const VideohubView = (props: {
     const { socket, isConnected } = useSocket();
     const t = useTranslations('Videohubs');
 
-    const socketHandlerRef = useRef<{ videohubs?: IVideohub[], videohub?: IVideohub, onVideohubUpdate: (e: VideohubUpdate) => void, handleReceivedUpcomingScenes: (scenes: IUpcomingScene[]) => void }>({
+    const socketHandlerRef = useRef<{ videohubs?: IVideohub[], sendToast: (intent: ToastIntent, msg: string) => void, videohub?: IVideohub, onVideohubUpdate: (e: VideohubUpdate) => void, handleReceivedUpcomingScenes: (scenes: IUpcomingScene[]) => void }>({
         videohubs: undefined,
+        sendToast(intent: ToastIntent, msg: string) {
+            if (isNotificationGranted()) {
+                showNotification("Videohubs", { body: msg });
+            } else {
+                sendToast(dispatchToast, intent, msg, 10 * 1000);
+            }
+        },
         onVideohubUpdate(e) {
             const videohubs = socketHandlerRef.current.videohubs;
 
@@ -118,12 +125,12 @@ const VideohubView = (props: {
 
                     switch (e.reason) {
                         case "connection_established": {
-                            sendToast(dispatchToast, "success", t("events.connection.established"), 60 * 1000)
+                            socketHandlerRef.current.sendToast("success", t("events.connection.established"))
                             break
                         }
 
                         case "connection_lost": {
-                            sendToast(dispatchToast, "warning", t("events.connection.lost"), 60 * 1000)
+                            socketHandlerRef.current.sendToast("warning", t("events.connection.lost"))
                             break
                         }
 
@@ -133,13 +140,7 @@ const VideohubView = (props: {
                             if (changes.length > 0) {
                                 // ${changes.length > 1 ? ` and ${changes.length - 1} more.` : ""}`
                                 const input = e.data.inputs[changes[0].input].label, output = e.data.outputs[changes[0].output].label;
-                                const msg = t("events.routingUpdate", { input: input, output: output, more: Math.max(changes.length - 1, 0) });
-
-                                if (isNotificationGranted()) {
-                                    showNotification("Videohubs", { body: msg });
-                                } else {
-                                    sendToast(dispatchToast, "success", msg, 5000)
-                                }
+                                socketHandlerRef.current.sendToast("success", t("events.routingUpdate", { input: input, output: output, more: Math.max(changes.length - 1, 0) }))
                             }
 
                             break
