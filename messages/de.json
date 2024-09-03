@@ -33,6 +33,9 @@
       "success": "Szene erfolgreich automatisch angewandt."
     }
   },
+  "ScenesList": {
+    "defaultDescription": "Wende {amount, plural, =0 {keine Änderung} =1 {eine Änderung} other {# Änderungen}} an."
+  },
   "Videohubs": {
     "routing": {
       "title": "Belegung",

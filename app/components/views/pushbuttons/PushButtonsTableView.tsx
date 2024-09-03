@@ -12,11 +12,6 @@ import { IScene } from "@/app/interfaces/scenes";
 import { IUser } from "@/app/authentification/interfaces";
 import { useTranslations } from "next-intl";
 
-export const getSceneDescription = (scene: IScene): string => {
-    const t = useTranslations('ScenesTable');
-    return scene.description || t("defaultDescription", {amount: scene.actions.length});
-}
-
 export const PushButtonsTableView = (props: { videohub: IVideohub, buttons: IScene[], onButtonUpdate: (button: IScene, action: "create" | "update" | "delete") => void, user: IUser }) => {
     const canSchedule: boolean = useClientSession(PERMISSION_VIDEOHUB_SCENES_SCHEDULE)
     const t = useTranslations('ScenesTable');
@@ -31,7 +26,7 @@ export const PushButtonsTableView = (props: { videohub: IVideohub, buttons: ISce
                     {button.label}
                 </TableCellLayout>,
                 <TableCellLayout key={`${key}_description`}>
-                    {getSceneDescription(button)}
+                    {button.description || t("defaultDescription", {amount: button.actions.length})}
                 </TableCellLayout>,
                 <TableCellLayout key={`${key}_edit`}>
                     <div className="md:flex justify-items-center">

@@ -33,6 +33,9 @@
       "success": "Scheduled scene was applied successfully."
     }
   },
+  "ScenesList": {
+    "defaultDescription": "Apply {amount, plural, =0 {no changes} =1 {one change} other {# changes}}"
+  },
   "Videohubs": {
     "routing": {
       "title": "Routing",

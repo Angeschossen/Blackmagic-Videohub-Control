@@ -7,6 +7,7 @@ import { MessageBar } from "../../MessageBar";
 import { FaTrash } from "react-icons/fa";
 import { IoIosCheckmarkCircle } from "react-icons/io";
 import { useFormatter, useTranslations } from "next-intl";
+import { TbLetterX } from "react-icons/tb";
 
 async function handleScenceCancel(videohub: number, scene: number, cancel: boolean) {
     await fetch(`/api/videohubs/${videohub}/scenes/${scene}/cancel`, getRequestHeader("PATCH", { cancel: cancel } as ICancelScheduledSceneRequest));
@@ -25,15 +26,15 @@ export const ScheduledButtons = (props: { videohub: IVideohub, scheduledButtons:
         <MessageBar
             data-tooltip-target={"tooltip-animation"}
             icon={button.cancelled ?
-                <IoIosCheckmarkCircle color="green" onClick={() => {
+                <TbLetterX onClick={() => {
                     handleScenceCancel(props.videohub.id, button.id, !button.cancelled);
                 }} />
                 :
-                <FaTrash onClick={() => {
+                <IoIosCheckmarkCircle color="green" onClick={() => {
                     handleScenceCancel(props.videohub.id, button.id, !button.cancelled);
                 }} />
             }
             title={button.cancelled ? t("cancelled") : t("scheduled")}
-            description={t("description", {button: button.label, time: format.dateTime(new Date(button.time), {hour: "numeric", minute: "numeric"})})} />
+            description={t("description", { button: button.label, time: format.dateTime(new Date(button.time), { hour: "numeric", minute: "numeric" }) })} />
     );
 }

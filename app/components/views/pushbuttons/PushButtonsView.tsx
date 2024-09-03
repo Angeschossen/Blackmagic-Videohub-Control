@@ -1,4 +1,3 @@
-import { Stack } from "@fluentui/react";
 import { CompoundButton, makeStyles, ProgressBar } from "@fluentui/react-components";
 import { Field } from "@fluentui/react-components";
 import { useState } from "react";
@@ -6,7 +5,7 @@ import { getRandomKey } from "@/app/util/commonutils";
 import {  getRequestHeader } from "@/app/util/fetchutils";
 import { IScene } from "@/app/interfaces/scenes";
 import { IRoutingRequest, IVideohub, RoutingUpdateResult } from "@/app/interfaces/videohub";
-import { getSceneDescription } from "./PushButtonsTableView";
+import { useTranslations } from "next-intl";
 
 interface InputProps {
   videohub?: IVideohub,
@@ -81,6 +80,7 @@ export function sortButtons(a: IScene, b: IScene): number {
 export const PushButtonsList = (props: InputProps) => {
   const [request, setRequest] = useState<IRoutingRequest>()
   const styles = useStyles();
+  const t = useTranslations('ScenesList');
 
   const isRequestComplete = () => {
     return request == undefined || request.result != undefined;
@@ -99,7 +99,7 @@ export const PushButtonsList = (props: InputProps) => {
           <div className="grid justify-items-center space-y-4 md:flex md:justify-items-start md:space-x-4 md:space-y-0">
             {props.pushbuttons.sort(sortButtons).map((button, key) => {
               return (
-                <CompoundButton className={styles.longText} disabled={!isRequestComplete()} key={key} secondaryContent={getSceneDescription(button)} style={{ backgroundColor: button.color }}
+                <CompoundButton className={styles.longText} disabled={!isRequestComplete()} key={key} secondaryContent={button.description || t("defaultDescription", {amount: button.actions.length})} style={{ backgroundColor: button.color }}
                   onClick={async () => {
                     if (props.videohub == undefined || !isRequestComplete()) {
                       return

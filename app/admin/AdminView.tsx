@@ -12,8 +12,8 @@ import React from "react";
 import { VideohubPage } from '../components/videohub/VideohubPage';
 import { useTranslations } from 'next-intl';
 
-export const AdminView = (props: {videohubs: IVideohub[], roles: IRole[], users: IUser[], permissions: string[]}) => {
-    const [videohub, setVideohub] = React.useState<IVideohub | undefined>(props.videohubs.length > 0 ? props.videohubs[0]:undefined);
+export const AdminView = (props: { videohubs: IVideohub[], roles: IRole[], users: IUser[], permissions: string[] }) => {
+    const [videohub, setVideohub] = React.useState<IVideohub | undefined>(props.videohubs.length > 0 ? props.videohubs[0] : undefined);
     const [roles, setRoles] = React.useState<IRole[]>(props.roles);
     const [users, setUsers] = React.useState<IUser[]>(props.users);
     const t = useTranslations('Administration');
@@ -23,6 +23,7 @@ export const AdminView = (props: {videohubs: IVideohub[], roles: IRole[], users:
             <div className='mt-5'>
                 <div className='mt-5'>
                     <SelectVideohub
+                        selected={videohub}
                         videohubs={props.videohubs}
                         onSelectVideohub={(videohub: IVideohub) => setVideohub(videohub)} />
                 </div>

@@ -18,6 +18,7 @@ import { ScheduledButtons } from '../components/views/pushbuttons/UpcomingPushBu
 import { PushButtonsList } from '../components/views/pushbuttons/PushButtonsView';
 import { useSocket } from '../providers/socket-provider';
 import { useTranslations } from 'next-intl';
+import { isNotificationGranted, requestNotificationPermission, showNotification } from '../util/desktopNotificationUtil';
 
 
 export function getVideohubFromArray(videohubs: IVideohub[], id: number): IVideohub | undefined {
@@ -132,7 +133,13 @@ const VideohubView = (props: {
                             if (changes.length > 0) {
                                 // ${changes.length > 1 ? ` and ${changes.length - 1} more.` : ""}`
                                 const input = e.data.inputs[changes[0].input].label, output = e.data.outputs[changes[0].output].label;
-                                sendToast(dispatchToast, "success", t("events.routingUpdate", { input: input, output: output, more: Math.max(changes.length - 1, 0) }), 5000)
+                                const msg = t("events.routingUpdate", { input: input, output: output, more: Math.max(changes.length - 1, 0) });
+
+                                if (isNotificationGranted()) {
+                                    showNotification("Videohubs", { body: msg });
+                                } else {
+                                    sendToast(dispatchToast, "success", msg, 5000)
+                                }
                             }
 
                             break
@@ -166,6 +173,10 @@ const VideohubView = (props: {
     useEffect(() => {
         socketHandlerRef.current.videohub = videohub;
     }, [videohub]);
+
+    useEffect(() => {
+        requestNotificationPermission();
+    }, []);
 
     useEffect(() => {
         if (socket == null) {
@@ -203,6 +214,7 @@ const VideohubView = (props: {
             <div className='my-5'>
                 <SelectVideohub
                     videohubs={videohubs}
+                    selected={videohub}
                     onSelectVideohub={(hub: IVideohub) => {
                         setVideohub(hub)
                         onSelectVideohub(hub);
