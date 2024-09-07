@@ -165,7 +165,7 @@ const VideohubView = (props: {
         if (routingUpdate?.error != undefined) {
             sendToast(dispatchToast, "error", tRequestStatus(`result.${routingUpdate.error}`), 60 * 1000)
         }
-    }, [routingUpdate, dispatchToast]);
+    }, [routingUpdate, dispatchToast, tRequestStatus]);
 
     useEffect(() => {
         socketHandlerRef.current.videohubs = videohubs;
