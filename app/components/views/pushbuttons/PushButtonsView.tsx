@@ -2,7 +2,7 @@ import { CompoundButton, makeStyles, ProgressBar } from "@fluentui/react-compone
 import { Field } from "@fluentui/react-components";
 import { useState } from "react";
 import { getRandomKey } from "@/app/util/commonutils";
-import {  getRequestHeader } from "@/app/util/fetchutils";
+import { getRequestHeader } from "@/app/util/fetchutils";
 import { IScene } from "@/app/interfaces/scenes";
 import { IRoutingRequest, IVideohub, RoutingUpdateResult } from "@/app/interfaces/videohub";
 import { useTranslations } from "next-intl";
@@ -32,28 +32,30 @@ export interface RoutingData {
   statusKey: number,
 }
 
-const getRequestState = (props: { request?: IRoutingRequest }): RequestState => {
-  if (props.request != undefined) {
-    const res = props.request.result;
-    if (res != undefined) {
-      if (res.result) {
-        return { state: "success", message: "Routing update successful.", value: 1, hint: undefined }
-      } else {
-        return { state: "error", message: res.message || "", value: 1, hint: undefined }
-      }
-    }
-  }
-
-  return { state: undefined, message: undefined, value: undefined, hint: "Please wait until the videohub acknowledged the change." }
-}
-
 const RequestStatus = (props: { request?: IRoutingRequest }) => {
+  const t = useTranslations('RequestStatus');
+
   if (props.request == undefined) {
     return <></>
   }
 
+  const getRequestState = (props: { request?: IRoutingRequest }): RequestState => {
+    if (props.request != undefined) {
+      const res = props.request.result;
+      if (res != undefined) {
+        if (res.result) {
+          return { state: "success", message: "routing.success", value: 1, hint: undefined }
+        } else {
+          return { state: "error", message: res.message || "", value: 1, hint: undefined }
+        }
+      }
+    }
+  
+    return { state: undefined, message: undefined, value: undefined, hint: t("pending") }
+  }
+
   const state = getRequestState(props)
-  return <Field hint={state.hint} label={state.state != "error" ? `Waiting for Response: ${props.request.button.label}` : "Last Button failed."} validationMessage={state.message} validationState={state.state}>
+  return <Field hint={state.hint} label={t(`title.${state.state != "error" ? "pending":"failed"}`, {scene: props.request.button.label})} validationMessage={state.message == undefined ? undefined : t(`result.${state.message}`)} validationState={state.state}>
     <ProgressBar
       value={state.value} />
   </Field>
@@ -99,7 +101,7 @@ export const PushButtonsList = (props: InputProps) => {
           <div className="grid justify-items-center space-y-4 md:flex md:justify-items-start md:space-x-4 md:space-y-0">
             {props.pushbuttons.sort(sortButtons).map((button, key) => {
               return (
-                <CompoundButton className={styles.longText} disabled={!isRequestComplete()} key={key} secondaryContent={button.description || t("defaultDescription", {amount: button.actions.length})} style={{ backgroundColor: button.color }}
+                <CompoundButton className={styles.longText} disabled={!isRequestComplete()} key={key} secondaryContent={button.description || t("defaultDescription", { amount: button.actions.length })} style={{ backgroundColor: button.color }}
                   onClick={async () => {
                     if (props.videohub == undefined || !isRequestComplete()) {
                       return
@@ -126,7 +128,7 @@ export const PushButtonsList = (props: InputProps) => {
                     const json: RoutingUpdateResult = await (await fetch(`/api/videohubs/${req.videohubId}/routing`, getRequestHeader("POST", req))).json();
                     req.result = json;
                     if (!json.result) {
-                      req.result.message = `Failed: ${json.message || "Unknown"}`
+                      req.result.message = json.message
                     } else {
                       if (props.onRoutingUpdated != undefined) {
                         props.onRoutingUpdated(req)

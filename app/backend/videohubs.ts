@@ -342,7 +342,7 @@ export class Videohub {
                     if (this.data.connected) {
                         request.send(this); // send it
                     } else {
-                        request.result = { result: false, message: "No connection to videohub." }; // still not connected
+                        request.result = { result: false, message: "disconnected" }; // still not connected
                         resolve(request.result);
                         clearTimeout(timeout2Id); // we dont need to wait for the second timeout, cancel it...
                     }
@@ -356,7 +356,7 @@ export class Videohub {
             timeout2Id = setTimeout(() => {
                 if (request.result == undefined) { // only resolve if we haven't already
                     this.info(`Request timed out: ${outputs} ${inputs}`)
-                    request.result = { result: false, message: "Request timed out." }
+                    request.result = { result: false, message: "timeout" }
                     resolve(request.result)
                 }
 

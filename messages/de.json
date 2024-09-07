@@ -36,6 +36,17 @@
   "ScenesList": {
     "defaultDescription": "Wende {amount, plural, =0 {keine Änderung} =1 {eine Änderung} other {# Änderungen}} an."
   },
+  "RequestStatus": {
+    "title": {
+      "pending": "Warte auf Antwort für: {scene}",
+      "failed": "Letzte Anwendung fehlgeschlagen: {scene}"
+    },
+    "pending": "Bitte warte bis der Videohub die Änderung bestätigt hat.",
+    "result": {
+      "disconnected": "Keine Verbindung zum Videohub möglich. Bitte stelle sicher, dass er eingeschaltet ist und eine aktive Netzwerkverbindung besteht.",
+      "timeout": "Keine Antwort vom Videhub erhalten."
+    }
+  },
   "Videohubs": {
     "routing": {
       "title": "Belegung",
@@ -232,7 +243,7 @@
   },
   "InputModal": {
     "buttons": {
-      "close": "Schließen",
+      "close": "Abbrechen",
       "submit": "Bestätigen"
     }
   }

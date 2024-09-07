@@ -3,6 +3,7 @@ import * as React from "react";
 import { IVideohub } from "../interfaces/videohub";
 import { IoIosCheckmarkCircle, IoIosInformationCircle, IoIosWarning } from "react-icons/io";
 import { useTranslations } from "next-intl";
+import { IoWarningOutline } from "react-icons/io5";
 
 export const VideohubFooter = (p: {
     videohub?: IVideohub,
@@ -31,7 +32,7 @@ export const VideohubFooter = (p: {
             desc = t("status.disconnected.description")
             colorBg = "bg-red-50"
             colorBorder = "border-red-600"
-            icon = <IoIosWarning />
+            icon = <IoWarningOutline />
         }
     }
 

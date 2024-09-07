@@ -71,7 +71,7 @@ export const OutputsView = (props: { videohub: IVideohub, outputs: IOutput[], us
                                     await fetch(`/api/videohubs/${videohub.id}/routing`, getRequestHeader("POST", routingUpdate)).then(async res => {
                                         if (props.onRoutingUpdate != undefined) {
                                             const json = await res.json() as RoutingUpdateResult;
-                                            routingUpdate.error = json.result ? undefined : `Routing update failed: ${json.message}`
+                                            routingUpdate.error = json.result ? undefined : json.message
                                             props.onRoutingUpdate(routingUpdate);
                                         }
                                     })

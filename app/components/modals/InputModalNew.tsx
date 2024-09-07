@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogBody, DialogContent, DialogOpenCha
 import React from "react";
 import { AlertMessage } from "../common/AlertMessage";
 import { useTranslations } from "next-intl";
+import { MessageBar, MessageBarWithIntent } from "../MessageBar";
 
 
 interface InputProps extends InputModalProps {
@@ -60,10 +61,11 @@ export const InputModal = (props: InputProps) => {
                             <div className="flex flex-col items-center my-4 space-y-3">
                                 {props.children}
                                 {error != undefined &&
-                                    <AlertMessage
-                                        style={{ margin: 5 }}
+                                    <MessageBarWithIntent
                                         intent="error"
-                                        message={error} />
+                                        title="Failure"
+                                        description={error}
+                                    />
                                 }
                             </div>
                         </DialogContent>

@@ -36,6 +36,17 @@
   "ScenesList": {
     "defaultDescription": "Apply {amount, plural, =0 {no changes} =1 {one change} other {# changes}}"
   },
+  "RequestStatus": {
+    "title": {
+      "pending": "Waiting for reply from videohub: {scene}",
+      "failed": "Last scene failed: {scene}"
+    },
+    "pending": "Please wait until the videohub acknowledged this request.",
+    "result": {
+      "disconnected": "No connection to videohub possible. It's probably turned off.",
+      "timeout": "Request to videohub timed out."
+    }
+  },
   "Videohubs": {
     "routing": {
       "title": "Routing",

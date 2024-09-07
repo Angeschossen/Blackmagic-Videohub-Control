@@ -83,6 +83,7 @@ const VideohubView = (props: {
     const router = useRouter();
     const { socket, isConnected } = useSocket();
     const t = useTranslations('Videohubs');
+    const tRequestStatus = useTranslations('RequestStatus');
 
     const socketHandlerRef = useRef<{ videohubs?: IVideohub[], sendToast: (intent: ToastIntent, msg: string) => void, videohub?: IVideohub, onVideohubUpdate: (e: VideohubUpdate) => void, handleReceivedUpcomingScenes: (scenes: IUpcomingScene[]) => void }>({
         videohubs: undefined,
@@ -138,12 +139,11 @@ const VideohubView = (props: {
                             const changes: any[] = e.info.changes
 
                             if (changes.length > 0) {
-                                // ${changes.length > 1 ? ` and ${changes.length - 1} more.` : ""}`
                                 const input = e.data.inputs[changes[0].input].label, output = e.data.outputs[changes[0].output].label;
                                 socketHandlerRef.current.sendToast("success", t("events.routingUpdate", { input: input, output: output, more: Math.max(changes.length - 1, 0) }))
                             }
 
-                            break
+                            break;
                         }
 
                         default:
@@ -163,7 +163,7 @@ const VideohubView = (props: {
 
     useEffect(() => {
         if (routingUpdate?.error != undefined) {
-            sendToast(dispatchToast, "error", routingUpdate.error, 60 * 1000)
+            sendToast(dispatchToast, "error", tRequestStatus(`result.${routingUpdate.error}`), 60 * 1000)
         }
     }, [routingUpdate, dispatchToast]);
 
