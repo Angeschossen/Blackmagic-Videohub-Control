@@ -44,7 +44,8 @@
     "pending": "Bitte warte bis der Videohub die Änderung bestätigt hat.",
     "result": {
       "disconnected": "Keine Verbindung zum Videohub möglich. Bitte stelle sicher, dass er eingeschaltet ist und eine aktive Netzwerkverbindung besteht.",
-      "timeout": "Keine Antwort vom Videhub erhalten."
+      "timeout": "Keine Antwort vom Videhub erhalten.",
+      "success": "Szene erfolgreich angewandt."
     }
   },
   "Videohubs": {

@@ -44,7 +44,7 @@ const RequestStatus = (props: { request?: IRoutingRequest }) => {
       const res = props.request.result;
       if (res != undefined) {
         if (res.result) {
-          return { state: "success", message: "routing.success", value: 1, hint: undefined }
+          return { state: "success", message: "success", value: 1, hint: undefined }
         } else {
           return { state: "error", message: res.message || "", value: 1, hint: undefined }
         }

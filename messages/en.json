@@ -44,7 +44,8 @@
     "pending": "Please wait until the videohub acknowledged this request.",
     "result": {
       "disconnected": "No connection to videohub possible. It's probably turned off.",
-      "timeout": "Request to videohub timed out."
+      "timeout": "Request to videohub timed out.",
+      "success": "Scene applied successfully."
     }
   },
   "Videohubs": {
