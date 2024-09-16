@@ -267,23 +267,25 @@ export const EditPushButtonModal = (props: Props) => {
                 <AccordionItem value={1}>
                     <AccordionHeader size="large" icon={<TextboxRegular />}>{t("sections.general.title")}</AccordionHeader>
                     <AccordionPanel>
-                        <div className="space-y-3">
-                            <div className="flex flex-col">
-                                <Label htmlFor={inputNameId}>{t("sections.general.fields.name")}</Label>
-                                <Input
-                                    required
-                                    value={name.value as string}
-                                    onChange={onChangeName}
-                                    id={inputNameId} />
-                            </div>
-                            <div className="flex flex-col">
-                                <Label htmlFor={inputDescriptionId}>{t("sections.general.fields.description")}</Label>
-                                <Textarea
-                                    value={description.value as string}
-                                    onChange={onChangeDescription}
-                                    id={inputDescriptionId} />
-                            </div>
-                        </div>
+<div className="space-y-3">
+    <div className="flex flex-col">
+        <Label htmlFor={inputNameId}>
+            {t("sections.general.fields.name")}</Label>
+        <Input
+            required
+            value={name.value as string}
+            onChange={onChangeName}
+            id={inputNameId} />
+    </div>
+    <div className="flex flex-col">
+        <Label htmlFor={inputDescriptionId}>
+            {t("sections.general.fields.description")}</Label>
+        <Textarea
+            value={description.value as string}
+            onChange={onChangeDescription}
+            id={inputDescriptionId} />
+    </div>
+</div>
                     </AccordionPanel>
                 </AccordionItem>
                 <AccordionItem value={2}>

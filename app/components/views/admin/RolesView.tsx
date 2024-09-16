@@ -69,23 +69,23 @@ export const RolesView = (props: Props) => {
                                 choices={props.permissions} />
                         </div>
                         <div className="mr-2 my-2">
-                            <CheckBoxModal
-                                title={t("actions.outputs.title")}
-                                description={t("actions.outputs.description")}
-                                choices={props.videohub?.outputs.map(output => {
-                                    return { value: output.id.toString(), label: output.label };
-                                }) || []}
-                                handleSubmit={async function (checked: string[]): Promise<string | undefined> {
-                                    const videohub: IVideohub | undefined = props.videohub
-                                    if (videohub == undefined) {
-                                        return "No videohub setup yet."
-                                    }
-                                    const arr: number[] = checked.map(value => Number(value))
-                                    return fetch(`/api/roles/${role.id}/outputs`, getRequestHeader("PUT",
-                                        { videohub_id: videohub.id, outputs: arr })).then(async res => {
-                                            return res.status == 200 ? undefined : await res.json(); // handle result...
-                                        });
-                                }}
+<CheckBoxModal
+    title={t("actions.outputs.title")}
+    description={t("actions.outputs.description")}
+    choices={props.videohub?.outputs.map(output => {
+        return { value: output.id.toString(), label: output.label };
+    }) || []}
+    handleSubmit={async function (checked: string[]): Promise<string | undefined> {
+        const videohub: IVideohub | undefined = props.videohub
+        if (videohub == undefined) {
+            return "No videohub setup yet."
+        }
+        const arr: number[] = checked.map(value => Number(value))
+        return fetch(`/api/roles/${role.id}/outputs`, getRequestHeader("PUT",
+            { videohub_id: videohub.id, outputs: arr })).then(async res => {
+                return res.status == 200 ? undefined : await res.json(); 
+            });
+    }}
                                 defaultChecked={role.outputs.filter(output => output.videohub_id === props.videohub?.id).map(output => output.output_id.toString())}
                                 trigger={
                                     <Button disabled={!role.editable}>
