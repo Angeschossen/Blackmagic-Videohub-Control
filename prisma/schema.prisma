@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Videohub {
+  id              Int                @id @default(autoincrement())
+  ip              String             @unique
+  name            String             @unique
+  version         String
+  inputs          Input[]
+  outputs         Output[]
+  scenes          Scene[]
+  scenes_actions  SceneAction[]
+  activities      VideohubActivity[]
+  roles_outputs   RoleOutput[]
+  scenes_triggers SceneTrigger[]
+  latitude        Decimal
+  longitude       Decimal
+
+  @@map("videohubs")
+}
+
+model Input {
+  id            Int
+  videohub      Videohub      @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id   Int
+  label         String
+  outputs       Output[]
+  scene_actions SceneAction[]
+  defaults      Output[]      @relation("input_default")
+
+  @@id([videohub_id, id], name: "videohub_input")
+  @@map("inputs")
+}
+
+model Output {
+  id               Int
+  videohub         Videohub       @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id      Int
+  input            Input?         @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
+  input_id         Int?
+  input_default    Input?         @relation("input_default", fields: [videohub_id, input_default_id], references: [videohub_id, id], onDelete: Cascade)
+  input_default_id Int?
+  label            String
+  scenes_actions   SceneAction[]
+  role_outputs     RoleOutput[]
+  scenes_triggers  SceneTrigger[]
+
+  @@id([videohub_id, id], name: "videohub_output")
+  @@map("outputs")
+}
+
+model SceneAction {
+  id          Int            @id @default(autoincrement())
+  videohub    Videohub       @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  output      Output         @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id   Int
+  input       Input          @relation(fields: [videohub_id, input_id], references: [videohub_id, id], onDelete: Cascade)
+  input_id    Int
+  scene       Scene          @relation(fields: [scene_id], references: [id], onDelete: Cascade)
+  scene_id    Int            @map("scene_id")
+  trigger     SceneTrigger[]
+
+  @@map("scenes_actions")
+}
+
+enum TriggerType {
+  TIME
+  SUNRISE
+  SUNSET
+}
+
+model SceneTrigger {
+  videohub    Videohub    @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  id          String      @default(cuid())
+  type        TriggerType @default(TIME)
+  time        DateTime    @db.Time()
+  day         Int
+  scene_id    Int         @map("scene_id")
+  scene       Scene       @relation(fields: [scene_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  output      Output      @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id   Int
+  action      SceneAction @relation(fields: [action_id], references: [id], onDelete: Cascade)
+  action_id   Int
+
+  @@id([action_id, id, day], name: "action_trigger_day")
+  @@map("scenes_triggers")
+}
+
+model Scene {
+  id          Int            @id @default(autoincrement())
+  videohub    Videohub       @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  label       String
+  description String
+  display     Boolean        @default(true)
+  sorting     Int            @default(0)
+  actions     SceneAction[]
+  color       String?
+  user        User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     String
+  triggers    SceneTrigger[]
+
+  @@map("scenes")
+}
+
+model VideohubActivity {
+  id          Int      @id @default(autoincrement())
+  videohub    Videohub @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  title       String
+  description String?  @db.MediumText
+  icon        String
+  time        DateTime
+
+  @@map("videohub_activities")
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  name        String           @unique
+  editable    Boolean
+  users       User[]
+  permissions RolePermission[]
+  outputs     RoleOutput[]
+
+  @@map("roles")
+}
+
+model RolePermission {
+  permission String
+  role       Role   @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id    Int
+
+  @@id([role_id, permission], name: "role_permissions")
+  @@map("roles_permissions")
+}
+
+model User {
+  id           String  @id @default(cuid())
+  username     String  @unique /// @encrypted
+  usernameHash String? @unique @map("username_hash") /// @encryption:hash(username)
+  password     String /// @encrypted
+  role         Role?   @relation(fields: [role_id], references: [id], onDelete: SetNull)
+  role_id      Int?
+  scenes       Scene[]
+
+  @@map("users")
+}
+
+model RoleOutput {
+  role        Role     @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  role_id     Int
+  videohub    Videohub @relation(fields: [videohub_id], references: [id], onDelete: Cascade)
+  videohub_id Int
+  output      Output   @relation(fields: [videohub_id, output_id], references: [videohub_id, id], onDelete: Cascade)
+  output_id   Int
+
+  @@unique([role_id, videohub_id, output_id])
+  @@map("roles_outputs")
+}
