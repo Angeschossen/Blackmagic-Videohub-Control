@@ -34,7 +34,7 @@ const Page = async ({
     }
 
     return <WebsocketProvider>
-        <VideohubView videhubs={JSON.parse(JSON.stringify(hubs))} user={JSON.parse(JSON.stringify(user))} videohub={JSON.parse(JSON.stringify(selected))} scenes={JSON.parse(JSON.stringify(scenes))} upcomingScenes={JSON.parse(JSON.stringify(scheduled))} />
+        <VideohubView videhubs={JSON.parse(JSON.stringify(hubs))} user={JSON.parse(JSON.stringify(user))} videohub={selected == undefined ? undefined : JSON.parse(JSON.stringify(selected))} scenes={JSON.parse(JSON.stringify(scenes))} upcomingScenes={JSON.parse(JSON.stringify(scheduled))} />
     </WebsocketProvider>
 }
 

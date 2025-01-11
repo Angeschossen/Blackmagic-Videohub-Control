@@ -41,27 +41,8 @@ type LayoutProps = {
     children: React.ReactNode
 }
 
-export const Navigation = (props: LayoutProps) => {
-    const canEditRoles = React.useRef(useClientSession(PERMISSION_ROLE_EDIT))
-    const canEditUsers = React.useRef(useClientSession(PERMISSION_USER_EDIT))
-    const isDesktop = useNavViewType()
-    const [isOpen, setIsOpen] = React.useState(isDesktop);
-    const router = useRouter();
-    const t = useTranslations('Navigation');
-
-    const renderHamburgerWithToolTip = () => {
-        return (
-            <Tooltip content={t('navigation')} relationship="label">
-                <Hamburger onClick={() => setIsOpen(!isOpen)} />
-            </Tooltip>
-        );
-    };
-
-    <NavDrawer/>
-    return (
-        <div className="flex flex-row">
-            <div className="flex flex-col min-h-screen">
-                <NavDrawer
+/*
+<NavDrawer
                     selectedValue={usePathname()?.substring(1).split("/")[0]}
                     open={isOpen}
                     type={isDesktop ? "inline" : "overlay"}
@@ -95,6 +76,29 @@ export const Navigation = (props: LayoutProps) => {
                         }
                     </NavDrawerBody>
                 </NavDrawer>
+*/
+
+export const Navigation = (props: LayoutProps) => {
+    const canEditRoles = React.useRef(useClientSession(PERMISSION_ROLE_EDIT))
+    const canEditUsers = React.useRef(useClientSession(PERMISSION_USER_EDIT))
+    const isDesktop = useNavViewType()
+    const [isOpen, setIsOpen] = React.useState(isDesktop);
+    const router = useRouter();
+    const t = useTranslations('Navigation');
+
+    const renderHamburgerWithToolTip = () => {
+        return (
+            <Tooltip content={t('navigation')} relationship="label">
+                <Hamburger onClick={() => setIsOpen(!isOpen)} />
+            </Tooltip>
+        );
+    };
+
+    return (
+        <div className="flex flex-row">
+            <div className="flex flex-col min-h-screen">
+
+
             </div>
             <div className="flex-1 m-4">
                 {!isOpen && renderHamburgerWithToolTip()}
