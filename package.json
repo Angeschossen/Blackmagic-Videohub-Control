@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@fluentui/react": "^8.122.4",
-    "@fluentui/react-components": "^9.56.8",
-    "@fluentui/react-nav-preview": "^0.10.6",
+    "@fluentui/react": "^8.122.5",
+    "@fluentui/react-components": "^9.57.0",
+    "@fluentui/react-nav-preview": "^0.10.7",
     "@isaacs/ttlcache": "^1.4.1",
     "@next-auth/prisma-adapter": "^1.0.7",
     "cron": "^3.1.7",
