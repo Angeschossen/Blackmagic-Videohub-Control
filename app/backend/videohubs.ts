@@ -912,15 +912,14 @@ function isDSTChange(wasDST: boolean): boolean {
 
 let cronDST: any = undefined;
 let isDST = isDstObserved(new Date());
-async function scheduleDSTCheck() {
+function scheduleDSTCheck() {
     if (cronDST != undefined) {
         throw Error("DST cronjob already scheduled.")
     }
 
     cronDST = new CronJob('1 * * * * *', async function () {
         try {
-            console.log(`Is change: ${isDSTChange(isDST)}`)
-            if (isDSTChange(isDST) || true) {
+            if (isDSTChange(isDST)) {
                 for (const hub of getClients()) {
                     await hub.scheduleButtons();
                 }
@@ -933,7 +932,7 @@ async function scheduleDSTCheck() {
         }
     },
         null, // on stop function
-        true, // start right now
+        false, // start right now
         "Etc/UTC" // must be run in UTC, since prisma db converts all dates to UTC
     );
 
