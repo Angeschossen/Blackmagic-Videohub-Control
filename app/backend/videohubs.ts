@@ -1,12 +1,14 @@
 import net from 'net';
 const CronJob = require('cron').CronJob;
 import cache from 'global-cache';
+import moment from "moment";
 import { getPrisma } from './prismadb';
 import { TTLCacheService } from '../util/TTLCache';
 import { Button, getLabelOfButton, retrievescheduledButton, retrieveScheduledButtonsToday, updateSunriseSet } from './scenes';
 import { emit } from './websockets';
 import { IUpcomingScene } from '../interfaces/scenes';
 import { IOutput, IRoutingPair, IVideohub, RoutingUpdateResult } from '../interfaces/videohub';
+import { isDstObserved } from '../util/dateutil';
 
 /* Icons */
 export const ICON_ERROR: string = "Error"
@@ -904,6 +906,39 @@ function scheduleButtonsAtMidnight() {
     console.log(`Nightly cronjob scheduled: ${new Date(cronMidnight.nextDates())}`)
 }
 
+function isDSTChange(wasDST: boolean): boolean {
+    return wasDST != isDstObserved(new Date());
+}
+
+let cronDST: any = undefined;
+let isDST = isDstObserved(new Date());
+async function scheduleDSTCheck() {
+    if (cronDST != undefined) {
+        throw Error("DST cronjob already scheduled.")
+    }
+
+    cronDST = new CronJob('1 * * * * *', async function () {
+        try {
+            console.log(`Is change: ${isDSTChange(isDST)}`)
+            if (isDSTChange(isDST) || true) {
+                for (const hub of getClients()) {
+                    await hub.scheduleButtons();
+                }
+            }
+
+            isDST = isDstObserved(new Date());
+        } catch (ex) {
+            console.log("Error while executing DST cronjob.");
+            console.log(ex);
+        }
+    },
+        null, // on stop function
+        true, // start right now
+        "Etc/UTC" // must be run in UTC, since prisma db converts all dates to UTC
+    );
+
+    console.log(`DST cronjob scheduled: ${new Date(cronDST.nextDates())}`)
+}
 
 export async function setupVideohubs() {
     if (getClients() != undefined) {
@@ -945,6 +980,7 @@ export async function setupVideohubs() {
 
     await executeNightly()
     scheduleButtonsAtMidnight()
+    scheduleDSTCheck();
 }
 
 export function getVideohubs() {

@@ -5,16 +5,20 @@ export const validateVideohub = (videohubs: IVideohub[], ip: string, longitude: 
     result?: IVideohub,
 } => {
     if (name != undefined) { // name can be left blank to get from videohub
-        name = name.trim()
+        name = name.trim();
+        if (name.length < 1) {
+            name = undefined;
+        } else {
 
-        if (name.length > 32 || name.length < 1) {
-            return { error: "The name must be between 1 and 32 characters long." };
-        }
+            if (name.length > 32 || name.length < 1) {
+                return { error: "The name must be between 1 and 32 characters long." };
+            }
 
-        const lowerCase = name.toLocaleLowerCase();
-        for (const b of videohubs) {
-            if (b.name.toLowerCase() === lowerCase && b !== edit) {
-                return { error: "A videohub with that name already exists." };
+            const lowerCase = name.toLocaleLowerCase();
+            for (const b of videohubs) {
+                if (b.name.toLowerCase() === lowerCase && b !== edit) {
+                    return { error: "A videohub with that name already exists." };
+                }
             }
         }
     }

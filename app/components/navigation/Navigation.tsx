@@ -97,8 +97,6 @@ export const Navigation = (props: LayoutProps) => {
     return (
         <div className="flex flex-row">
             <div className="flex flex-col min-h-screen">
-
-
             </div>
             <div className="flex-1 m-4">
                 {!isOpen && renderHamburgerWithToolTip()}

@@ -67,6 +67,16 @@ export function removeSecondsFromDate(date: Date) {
     date.setUTCMilliseconds(0)
 }
 
+function stdTimezoneOffset(date: Date) {
+    var jan = new Date(date.getFullYear(), 0, 1);
+    var jul = new Date(date.getFullYear(), 6, 1);
+    return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+}
+
+export function isDstObserved(date: Date) {
+    return date.getTimezoneOffset() < stdTimezoneOffset(date);
+}
+
 export function setDayOfWeekUTC(date: Date, dayOfWeek: number) {
     const dist = dayOfWeek - date.getUTCDay();
     date.setDate(date.getDate() + dist);

@@ -76,8 +76,6 @@ export class Button {
         this.scheduledTrigger = setTimeout(async () => {
             if (!this.cancelled) {
                 await this.videohub.executeButton(trigger.scene_id).then(async result => {
-                    const label = await getLabelOfButton(trigger.scene_id);
-
                     if (!result.result) {
                         this.videohub.addFailedButton(this);
                         await this.videohub.logActivity("scheduled.failed", ICON_ERROR);
@@ -129,7 +127,7 @@ async function updateSunriseSetType(videohub: Videohub, t: TriggerType, time: Da
         data: {
             time: time
         }
-    })
+    });
 }
 
 
